@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Kanban Scheduler</string>
+    <string name="app_title">Kanban Scheduler</string>
+    <string name="timer_picture">Timer picture</string>
+    <string name="slogan">A Better Way to Organize Your Tasks</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
 </resources>

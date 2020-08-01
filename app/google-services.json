@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "785101068294",
+    "firebase_url": "https://kaban-scheduler.firebaseio.com",
+    "project_id": "kaban-scheduler",
+    "storage_bucket": "kaban-scheduler.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785101068294:android:a2a8678cecc05288904b87",
+        "android_client_info": {
+          "package_name": "com.example.kanbanscheduler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785101068294-s8kdjh94u8faas1emdnlfm98jjv7orl6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2cjTLGvQo8S1N2pwlY9bfwOPJ4tTUnqQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785101068294-s8kdjh94u8faas1emdnlfm98jjv7orl6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
