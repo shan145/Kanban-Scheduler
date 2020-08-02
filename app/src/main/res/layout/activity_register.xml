@@ -110,5 +110,6 @@
         android:text="@string/sign_up"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:onClick="createUser"/>
 </LinearLayout>

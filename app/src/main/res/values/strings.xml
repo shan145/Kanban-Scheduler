@@ -12,4 +12,8 @@
     <string name="sign_up">Sign Up</string>
     <string name="enter">Enter</string>
     <string name="forgot_password">Did you forget your password? Click here</string>
+    <string name="authenticate_msg">You authenticated successfully!</string>
+    <string name="logout">logout</string>
+    <string name="reset_msg">Enter your email to reset your password.</string>
+    <string name="reset">Reset</string>
 </resources>
