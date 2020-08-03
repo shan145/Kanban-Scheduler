@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         if(user != null) {
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 }

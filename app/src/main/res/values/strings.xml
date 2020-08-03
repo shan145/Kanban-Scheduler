@@ -16,4 +16,9 @@
     <string name="logout">logout</string>
     <string name="reset_msg">Enter your email to reset your password.</string>
     <string name="reset">Reset</string>
+    <string name="to_do">These are your todos</string>
+    <string name="in_progress">These are your in progresses</string>
+    <string name="done">These are your finished</string>
+    <string name="more">More</string>
+    <string name="logout_cap">Logout</string>
 </resources>
