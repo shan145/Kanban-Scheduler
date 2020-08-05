@@ -3,7 +3,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="6dp">
+    android:paddingLeft="6dp"
+    android:paddingRight="6dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="12dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id = "@+id/card_view"
@@ -16,6 +19,7 @@
         card_view:strokeWidth="0.5dp"
         card_view:cardCornerRadius="4dp">
         <RelativeLayout
+            android:id="@+id/time_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
@@ -31,18 +35,20 @@
                 android:id="@+id/calendar"
                 android:orientation="horizontal">
                 <ImageView
+                    android:id="@+id/calendar_pic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="1dp"
                     card_view:srcCompat="@drawable/ic_calendar"
-                    android:contentDescription="calendar picture" />
+                    android:contentDescription="@string/calendar_picture" />
                 <TextView
+                    android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="1dp"
-                    android:text="Tue 04 Aug"
                     android:fontFamily="@font/montserrat"/>
                 <ImageView
+                    android:id="@+id/clock_pic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="20dp"
@@ -50,23 +56,56 @@
                     android:paddingTop="1dp"
                     android:paddingBottom="1dp"
                     card_view:srcCompat="@drawable/ic_clock"
-                    android:contentDescription="clock picture"/>
+                    android:contentDescription="@string/clock_picture"
+                    android:paddingEnd="1dp"
+                    android:paddingStart="20dp" />
                 <TextView
+                    android:id="@+id/time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="1dp"
-                    android:text="4:30 pm"
                     android:fontFamily="@font/montserrat"/>
             </LinearLayout>
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/description"
-                android:text="Groceries include: \n-Paper\n-Toiletry\n-Fun stuff\n-Cheese\n-Lots of L's"
-                android:padding="4dp"
+                android:id="@+id/fixed_description"
                 android:layout_below="@id/calendar"
-                android:fontFamily="@font/montserrat"
-                android:textSize="14sp"/>
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/description"
+                    android:padding="4dp"
+                    android:fontFamily="@font/montserrat"
+                    android:textSize="14sp"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/hold_functions"
+                    android:padding="4dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edit_button"
+                        android:padding="10dp"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:contentDescription="@string/edit_button"
+                        card_view:srcCompat="@drawable/ic_edit_button"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/delete_button"
+                        android:padding="10dp"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:contentDescription="@string/delete_button"
+                        android:clickable="true"
+                        card_view:srcCompat="@drawable/ic_delete_button"
+                        android:focusable="true" />
+                </LinearLayout>
+            </LinearLayout>
+
         </RelativeLayout>
 
     </com.google.android.material.card.MaterialCardView>

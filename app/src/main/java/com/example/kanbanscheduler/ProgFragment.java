@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 public class ProgFragment extends Fragment {
-    private final ArrayList<String> mTaskList = new ArrayList<>();
+    private ArrayList<Task> mTaskList;
     private RecyclerView mRecyclerView;
     private TaskListAdapter mAdapter;
 
@@ -27,18 +27,17 @@ public class ProgFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_prog, container, false);
 
-        // Initial test data in task list
-        for(int i = 0; i < 5; i++) {
-            mTaskList.add("Progress " + i);
-        }
-
+        // Initialize private variables
+        mTaskList = new ArrayList<>();
         mRecyclerView = view.findViewById(R.id.recyclerview);
         mAdapter = new TaskListAdapter(view.getContext(), mTaskList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+        // Initializes the "In Progress" Data
+        initializeProgressData();
 
         // Use for swiping Cardview to next type
         ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
@@ -55,5 +54,20 @@ public class ProgFragment extends Fragment {
         });
         helper.attachToRecyclerView(mRecyclerView);
         return view;
+    }
+
+    // Use to initialize TO-DO tasks
+    private void initializeProgressData() {
+        // Clears existing data (to avoid duplication).
+        mTaskList.clear();
+
+        for(int i = 0; i <5; i++) {
+            String taskName = "Progress " + i;
+            String taskDescription ="Description includes the following: \n-Tap\n-Tap\n-Tap " + i;
+            String taskDate = "Sun 02 Aug";
+            String taskTime = "7:30 pm";
+            mTaskList.add(new Task(taskName, taskDescription, taskDate, taskTime));
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }

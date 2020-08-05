@@ -17,7 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 public class DoneFragment extends Fragment {
-    private final ArrayList<String> mTaskList = new ArrayList<>();
+    private ArrayList<Task> mTaskList;
     private RecyclerView mRecyclerView;
     private TaskListAdapter mAdapter;
 
@@ -31,15 +31,14 @@ public class DoneFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_done, container, false);
 
-        // Initial test data in task list
-        for(int i = 0; i < 5; i++) {
-            mTaskList.add("Done " + i);
-        }
-
+        // Initialize private variables
+        mTaskList = new ArrayList<>();
         mRecyclerView = view.findViewById(R.id.recyclerview);
         mAdapter = new TaskListAdapter(view.getContext(), mTaskList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+        initializeDoneData();
 
         // Use for swiping Cardview to next type
         ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
@@ -56,5 +55,20 @@ public class DoneFragment extends Fragment {
         });
         helper.attachToRecyclerView(mRecyclerView);
         return view;
+    }
+
+    // Use to initialize TO-DO tasks
+    private void initializeDoneData() {
+        // Clears existing data (to avoid duplication).
+        mTaskList.clear();
+
+        for(int i = 0; i <5; i++) {
+            String taskName = "Done " + i;
+            String taskDescription ="Description includes the following: \n-Whoo\n-Whoo\n-Whoo " + i;
+            String taskDate = "Mon 03 Aug";
+            String taskTime = "8:30 pm";
+            mTaskList.add(new Task(taskName, taskDescription, taskDate, taskTime));
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }

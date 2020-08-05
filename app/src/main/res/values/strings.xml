@@ -21,4 +21,8 @@
     <string name="done">These are your finished</string>
     <string name="more">More</string>
     <string name="logout_cap">Logout</string>
+    <string name="calendar_picture">calendar picture</string>
+    <string name="clock_picture">clock picture</string>
+    <string name="edit_button">Edit Button</string>
+    <string name="delete_button">Delete button</string>
 </resources>
