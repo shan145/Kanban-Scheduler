@@ -5,12 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".ProgFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/montserrat"
-        android:text="@string/in_progress"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#121111" />
+    <include layout="@layout/content_home" />
 
 </FrameLayout>

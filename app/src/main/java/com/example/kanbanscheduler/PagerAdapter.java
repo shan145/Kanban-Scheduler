@@ -1,5 +1,7 @@
 package com.example.kanbanscheduler;
 
+import android.view.MotionEvent;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -27,4 +29,6 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
         return mNumOfTabs;
     }
+
+
 }

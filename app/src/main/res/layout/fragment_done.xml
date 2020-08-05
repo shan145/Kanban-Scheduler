@@ -5,12 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".DoneFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/montserrat"
-        android:text="@string/done"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#0C0C0C" />
+    <include layout="@layout/content_home" />
 
 </FrameLayout>
