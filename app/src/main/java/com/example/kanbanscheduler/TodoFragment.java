@@ -42,7 +42,7 @@ public class TodoFragment extends Fragment {
         });
 
         // Initial test data in task list
-        for(int i = 0; i < 25; i++) {
+        for(int i = 0; i < 5; i++) {
             mTaskList.add("Task " + i);
         }
 
