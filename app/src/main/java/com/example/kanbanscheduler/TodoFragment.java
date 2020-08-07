@@ -81,7 +81,7 @@ public class TodoFragment extends Fragment {
 
         for(int i = 0; i <5; i++) {
             String taskName = "Task " + i;
-            String taskDescription ="Description includes the following: \n-Power\n-Power\n-Power " + i;
+            String taskDescription ="Yolo " + i;
             String taskDate = "Sat 01 Aug";
             String taskTime = "6:30 pm";
             mTaskList.add(new Task(taskName, taskDescription, taskDate, taskTime));
