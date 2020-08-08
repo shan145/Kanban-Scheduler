@@ -1,6 +1,7 @@
 package com.example.kanbanscheduler;
 
 import android.content.ClipData;
+import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 
@@ -47,10 +48,8 @@ public class TodoFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                int taskListSize = mTaskList.size();
-//                mTaskList.add("Fab button pressed!");
-//                mRecyclerView.getAdapter().notifyItemInserted(taskListSize);
-//                mRecyclerView.smoothScrollToPosition(taskListSize);
+                Intent intent = new Intent(view.getContext(), TaskFillActivity.class);
+                startActivity(intent);
             }
         });
 
