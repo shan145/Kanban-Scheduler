@@ -6,10 +6,10 @@
             android:padding="15dp">
             <stroke android:color="#B8B1B1" android:width="2dp"/>
             <corners
-                android:bottomRightRadius="15dp"
-                android:bottomLeftRadius="15dp"
-                android:topLeftRadius="15dp"
-                android:topRightRadius="15dp" />
+                android:bottomRightRadius="100dp"
+                android:bottomLeftRadius="100dp"
+                android:topLeftRadius="100dp"
+                android:topRightRadius="100dp" />
             <solid android:color="#80FFFFFF"/>
         </shape>
     </item>
@@ -20,10 +20,10 @@
             android:padding="15dp">
             <stroke android:color="#B8B1B1" android:width="2dp"/>
             <corners
-                android:bottomRightRadius="15dp"
-                android:bottomLeftRadius="15dp"
-                android:topLeftRadius="15dp"
-                android:topRightRadius="15dp" />
+                android:bottomRightRadius="100dp"
+                android:bottomLeftRadius="100dp"
+                android:topLeftRadius="100dp"
+                android:topRightRadius="100dp" />
         </shape>
     </item>
 </selector>
