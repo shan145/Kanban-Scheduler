@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class TaskFillActivity extends AppCompatActivity {
+    private static final String TAG = "MyActivity";
     private Button mSetReminderButton;
     private Button mDiscardButton;
     private TextView mDate;
@@ -43,9 +45,11 @@ public class TaskFillActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM", Locale.US);
+                month = month + 1;
                 String dateString = month+"/"+day+"/"+year;
+                Log.d(TAG, dateString);
                 try {
-                    Date pickedDate = new SimpleDateFormat("mm/dd/yyyy", Locale.US).parse(dateString);
+                    Date pickedDate = new SimpleDateFormat("MM/dd/yyyy", Locale.US).parse(dateString);
                     assert pickedDate != null;
                     String dateFormatString = dateFormat.format(pickedDate);
                     mDate.setText(dateFormatString);
