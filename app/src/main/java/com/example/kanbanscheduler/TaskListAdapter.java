@@ -12,15 +12,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import java.lang.reflect.Array;
+import java.util.List;
 
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskViewHolder> {
-    private ArrayList<Task> mTaskList;
+    private List<Task> mTaskList;
     private LayoutInflater mInflator;
 
-    public TaskListAdapter(Context context, ArrayList<Task> taskList) {
+    public TaskListAdapter(Context context) {
         mInflator = LayoutInflater.from(context);
-        this.mTaskList = taskList;
     }
     @NonNull
     @Override
@@ -37,7 +37,18 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
 
     @Override
     public int getItemCount() {
-        return mTaskList.size();
+        if(mTaskList != null)
+            return mTaskList.size();
+        return 0;
+    }
+
+    public Task getTaskAtPosition(int position) {
+        return mTaskList.get(position);
+    }
+
+    void setTasks(List<Task> newTaskList) {
+        mTaskList = newTaskList;
+        notifyDataSetChanged();
     }
 
 
@@ -64,7 +75,13 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
             mTaskTitle.setText(currentTask.getName());
             mTaskDescription.setText(currentTask.getDescription());
             mDueDate.setText(currentTask.getDate());
+            if(currentTask.getDate().equals("")) {
+                mDueDate.setCompoundDrawables(null, null, null, null);
+            }
             mDueTime.setText(currentTask.getTime());
+            if(currentTask.getTime().equals("")) {
+                mDueTime.setCompoundDrawables(null, null, null, null);
+            }
             mDeleteView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

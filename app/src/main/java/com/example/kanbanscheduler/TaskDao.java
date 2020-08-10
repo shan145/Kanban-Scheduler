@@ -1,0 +1,24 @@
+package com.example.kanbanscheduler;
+
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.Query;
+
+import java.util.List;
+
+@Dao
+public interface TaskDao {
+    @Insert
+    void insert(Task task);
+
+    @Delete
+    void delete(Task task);
+
+    @Query("SELECT * FROM task_table WHERE task_type= :taskType AND email_address= :email")
+    LiveData<List<Task>> getTasks(String taskType, String email);
+
+    @Query("UPDATE task_table SET task_type = :taskType WHERE email_address= :email AND tid= :taskId")
+    void updateTaskType(String taskType, String email, int taskId);
+}

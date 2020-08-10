@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -22,6 +23,8 @@ import java.util.Locale;
 
 public class TaskFillActivity extends AppCompatActivity {
     private static final String TAG = "MyActivity";
+    private EditText mTaskName;
+    private EditText mTaskDescription;
     private Button mSetReminderButton;
     private Button mDiscardButton;
     private TextView mDate;
@@ -35,6 +38,8 @@ public class TaskFillActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_fill);
+        mTaskName = findViewById(R.id.task);
+        mTaskDescription = findViewById(R.id.task_description);
         mSetReminderButton = findViewById(R.id.set_reminder);
         mDiscardButton = findViewById(R.id.discard_reminder);
         mDate = findViewById(R.id.pick_date);
@@ -76,14 +81,56 @@ public class TaskFillActivity extends AppCompatActivity {
     }
 
     public void cancelForm(View view) {
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent();
         // Used to clear all previous activities in stack
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        setResult(RESULT_CANCELED, intent);
+        finish();
     }
 
     public void submitForm(View view) {
-        Toast.makeText(this, "Successfully submitted for now!", Toast.LENGTH_SHORT).show();
+        // If the task name isn't filled out
+        if(mTaskName.getText().toString().equals("")) {
+            Toast.makeText(this, "Please fill out the task name.", Toast.LENGTH_SHORT).show();
+        } else {
+            // if discard button is visible, then do check the following
+            if(mDiscardButton.getVisibility() == View.VISIBLE) {
+                // If date is filled out but not time
+                if(!mDate.getText().toString().equals("") && mTime.getText().equals("")) {
+                    Toast.makeText(this, "Please fill out the time as well.", Toast.LENGTH_SHORT).show();
+                // If time is filled out but note date
+                } else if(!mTime.getText().equals("") && mDate.getText().equals("")) {
+                    Toast.makeText(this, "Please fill out date as well.", Toast.LENGTH_SHORT).show();
+                // If neither time nor date is filled out
+                } else if(mTime.getText().equals("") && mDate.getText().equals("")) {
+                    Toast.makeText(this, "Please select a time and date.", Toast.LENGTH_SHORT).show();
+                // If passes all conditions, successfully submit
+                } else {
+                    Toast.makeText(this, "Successfully submitted!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    Bundle extras = new Bundle();
+                    extras.putString("EXTRA_TASK_NAME", mTaskName.getText().toString());
+                    extras.putString("EXTRA_TASK_DESCRIPTION", mTaskDescription.getText().toString());
+                    extras.putString("EXTRA_DATE", mDate.getText().toString());
+                    extras.putString("EXTRA_TIME", mTime.getText().toString());
+                    intent.putExtras(extras);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            // If discard button is invisible, then simply submit
+            } else {
+                Toast.makeText(this, "Successfully submitted!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                Bundle extras = new Bundle();
+                extras.putString("EXTRA_TASK_NAME", mTaskName.getText().toString());
+                extras.putString("EXTRA_TASK_DESCRIPTION", mTaskDescription.getText().toString());
+                extras.putString("EXTRA_DATE", mDate.getText().toString());
+                extras.putString("EXTRA_TIME", mTime.getText().toString());
+                intent.putExtras(extras);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }
     }
 
     public void showReminder(View view) {
@@ -98,8 +145,10 @@ public class TaskFillActivity extends AppCompatActivity {
     public void discardReminder(View view) {
         mDiscardButton.setVisibility(View.INVISIBLE);
         mDate.setVisibility(View.INVISIBLE);
+        mDate.setText(null);
         mDateLine.setVisibility(View.INVISIBLE);
         mTime.setVisibility(View.INVISIBLE);
+        mTime.setText(null);
         mTimeLine.setVisibility(View.INVISIBLE);
         mSetReminderButton.setVisibility(View.VISIBLE);
     }

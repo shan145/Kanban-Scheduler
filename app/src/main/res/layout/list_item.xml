@@ -6,7 +6,7 @@
     android:paddingLeft="6dp"
     android:paddingRight="6dp"
     android:paddingTop="6dp"
-    android:paddingBottom="6dp">
+    android:paddingBottom="0dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id = "@+id/card_view"

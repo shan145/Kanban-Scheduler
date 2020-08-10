@@ -21,10 +21,13 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity {
+    private FirebaseUser user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -60,11 +63,6 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    public void onStart() {
-        super.onStart();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    }
-
     public void logout() {
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, MainActivity.class);
@@ -86,5 +84,11 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public Bundle userEmailData() {
+        Bundle emailBundle = new Bundle();
+        emailBundle.putString("EMAIL", user.getEmail());
+        return emailBundle;
     }
 }
