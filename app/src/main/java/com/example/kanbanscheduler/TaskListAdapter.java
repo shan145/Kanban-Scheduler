@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.reflect.Array;
@@ -18,8 +20,10 @@ import java.util.List;
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskViewHolder> {
     private List<Task> mTaskList;
     private LayoutInflater mInflator;
+    private TaskViewModel mTaskViewModel;
 
     public TaskListAdapter(Context context) {
+        mTaskViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(TaskViewModel.class);
         mInflator = LayoutInflater.from(context);
     }
     @NonNull
@@ -58,6 +62,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
         private TextView mDueDate;
         private TextView mDueTime;
         private ImageView mDeleteView;
+        private ImageView mEditView;
         public TaskViewHolder(View itemView, TaskListAdapter adapter) {
             super(itemView);
 
@@ -67,6 +72,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
             mDueDate = itemView.findViewById(R.id.date);
             mDueTime = itemView.findViewById(R.id.time);
             mDeleteView = itemView.findViewById(R.id.delete_button);
+            mEditView = itemView.findViewById(R.id.edit_button);
             itemView.setOnClickListener(this);
         }
 
@@ -74,14 +80,24 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
             // Populate the TextViews with data.
             mTaskTitle.setText(currentTask.getName());
             mTaskDescription.setText(currentTask.getDescription());
+
+            // Set date drawables to invisible
             mDueDate.setText(currentTask.getDate());
             if(currentTask.getDate().equals("")) {
-                mDueDate.setCompoundDrawables(null, null, null, null);
+                mDueDate.setVisibility(View.INVISIBLE);
+            } else {
+                mDueDate.setVisibility(View.VISIBLE);
             }
+
+            // Set time drawables to invisible
             mDueTime.setText(currentTask.getTime());
             if(currentTask.getTime().equals("")) {
-                mDueTime.setCompoundDrawables(null, null, null, null);
+                mDueTime.setVisibility(View.INVISIBLE);
+            } else {
+                mDueTime.setVisibility(View.VISIBLE);
             }
+
+            // Set delete view listener
             mDeleteView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -93,6 +109,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             // Remove task from associated list
+                            mTaskViewModel.deleteTask(mTaskList.get(getAdapterPosition()));
                             mTaskList.remove(getAdapterPosition());
                             notifyItemRemoved(getAdapterPosition());
                         }
@@ -104,6 +121,14 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
                     });
                     AlertDialog dialog = builder.create();
                     dialog.show();
+                }
+            });
+
+            // Set Edit View click listener
+            mEditView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
                 }
             });
         }

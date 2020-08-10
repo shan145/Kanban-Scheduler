@@ -21,4 +21,7 @@ public interface TaskDao {
 
     @Query("UPDATE task_table SET task_type = :taskType WHERE email_address= :email AND tid= :taskId")
     void updateTaskType(String taskType, String email, int taskId);
+
+    @Query("UPDATE task_table SET task_name = :taskName, task_description= :description, date = :date, time = :time WHERE email_address= :emailAddress AND tid = :tid")
+    void updateTask(String taskName, String description, String date, String time, String emailAddress, int tid);
 }

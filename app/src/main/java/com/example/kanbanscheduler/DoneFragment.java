@@ -1,5 +1,7 @@
 package com.example.kanbanscheduler;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,9 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class DoneFragment extends Fragment {
-    private RecyclerView mRecyclerView;
     private TaskListAdapter mAdapter;
-    private String email;
 
     public DoneFragment() {
         // Required empty public constructor
@@ -33,11 +33,12 @@ public class DoneFragment extends Fragment {
 
         // Gets email from HomeActivity
         HomeActivity activity = (HomeActivity)getActivity();
+        assert activity != null;
         Bundle results = activity.userEmailData();
-        email = results.getString("EMAIL");
+        String email = results.getString("EMAIL");
 
         mViewModel.getTasks("done", email).observe(getViewLifecycleOwner(), tasks -> mAdapter.setTasks(tasks));
-        mRecyclerView = view.findViewById(R.id.recyclerview);
+        RecyclerView mRecyclerView = view.findViewById(R.id.recyclerview);
         mAdapter = new TaskListAdapter(view.getContext());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -54,7 +55,25 @@ public class DoneFragment extends Fragment {
                 int position = viewHolder.getAdapterPosition();
                 Task task = mAdapter.getTaskAtPosition(position);
                 if(direction == ItemTouchHelper.RIGHT) {
-                    mViewModel.deleteTask(task);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    builder.setCancelable(true);
+                    builder.setTitle("Delete this task?");
+                    builder.setMessage("Are you sure you want to delete this task?");
+                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Remove task from associated list
+                            mViewModel.deleteTask(task);
+                        }
+                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Cancel
+                            mAdapter.notifyItemChanged(position);
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 } else {
                     mViewModel.updateTaskType("progress", task.getEmail(), task.getTid());
                 }

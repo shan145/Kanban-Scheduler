@@ -37,4 +37,10 @@ public class KanbanRepository {
         });
     }
 
+    void updateTask(String taskName, String description, String date, String time, String emailAddress, int tid) {
+        KanbanRoomDatabase.databaseWriteExecutor.execute(() -> {
+            mTaskDao.updateTask(taskName, description, date, time, emailAddress, tid);
+        });
+    }
+
 }

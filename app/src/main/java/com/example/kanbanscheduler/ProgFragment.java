@@ -14,9 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class ProgFragment extends Fragment {
-    private RecyclerView mRecyclerView;
     private TaskListAdapter mAdapter;
-    private String email;
 
     public ProgFragment() {
         // Required empty public constructor
@@ -33,11 +31,12 @@ public class ProgFragment extends Fragment {
 
         // Gets email from HomeActivity
         HomeActivity activity = (HomeActivity)getActivity();
+        assert activity != null;
         Bundle results = activity.userEmailData();
-        email = results.getString("EMAIL");
+        String email = results.getString("EMAIL");
 
         mViewModel.getTasks("progress", email).observe(getViewLifecycleOwner(), tasks -> mAdapter.setTasks(tasks));
-        mRecyclerView = view.findViewById(R.id.recyclerview);
+        RecyclerView mRecyclerView = view.findViewById(R.id.recyclerview);
         mAdapter = new TaskListAdapter(view.getContext());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));

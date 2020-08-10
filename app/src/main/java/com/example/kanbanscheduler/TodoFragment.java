@@ -23,7 +23,6 @@ import static android.app.Activity.RESULT_OK;
 public class TodoFragment extends Fragment {
     private static final String TAG = "TodoFragment";
     public static final int NEW_TASK_ACTIVITY_REQUEST_CODE = 1;
-    private RecyclerView mRecyclerView;
     private TaskListAdapter mAdapter;
     private TaskViewModel mViewModel;
     private String email;
@@ -37,19 +36,23 @@ public class TodoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_todo, container, false);
+
+        // Creating ViewModel for Fragment (shared with other fragments thorugh requireActivity())
         mViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
 
         // Gets email from HomeActivity
         HomeActivity activity = (HomeActivity)getActivity();
+        assert activity != null;
         Bundle results = activity.userEmailData();
         email = results.getString("EMAIL");
         assert email != null;
         Log.d(TAG, email);
 
+        // Updates cached copy of words in adapter if change to live data is observed
         mViewModel.getTasks("todo", email).observe(getViewLifecycleOwner(), tasks -> mAdapter.setTasks(tasks));
+
         // Initialize private variables
-        mRecyclerView = view.findViewById(R.id.recyclerview);
-        mRecyclerView.getItemAnimator().setChangeDuration(0);
+        RecyclerView mRecyclerView = view.findViewById(R.id.recyclerview);
         mAdapter = new TaskListAdapter(view.getContext());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -87,10 +90,12 @@ public class TodoFragment extends Fragment {
 
         if (requestCode == NEW_TASK_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
+            assert extras != null;
             String taskName = extras.getString("EXTRA_TASK_NAME");
             String taskDescription = extras.getString("EXTRA_TASK_DESCRIPTION");
             String taskDate = extras.getString("EXTRA_DATE");
             String taskTime = extras.getString("EXTRA_TIME");
+            assert taskName != null;
             Task task = new Task(email, taskName, taskDescription, taskDate, taskTime, "todo");
             mViewModel.insertTask(task);
         }

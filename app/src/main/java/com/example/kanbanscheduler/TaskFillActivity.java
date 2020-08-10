@@ -33,6 +33,8 @@ public class TaskFillActivity extends AppCompatActivity {
     private View mTimeLine;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private TimePickerDialog.OnTimeSetListener mTimeSetListener;
+    private String dateString;
+    private String timeString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +48,17 @@ public class TaskFillActivity extends AppCompatActivity {
         mDateLine = findViewById(R.id.pick_date_line);
         mTime = findViewById(R.id.pick_time);
         mTimeLine = findViewById(R.id.pick_time_line);
+        dateString="";
+        timeString="";
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM", Locale.US);
                 month = month + 1;
-                String dateString = month+"/"+day+"/"+year;
+                dateString = month+"/"+day+"/"+year;
                 Log.d(TAG, dateString);
                 try {
+                    // MM is month while mm is minutes
                     Date pickedDate = new SimpleDateFormat("MM/dd/yyyy", Locale.US).parse(dateString);
                     assert pickedDate != null;
                     String dateFormatString = dateFormat.format(pickedDate);
@@ -67,9 +72,10 @@ public class TaskFillActivity extends AppCompatActivity {
             @Override
             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
                 SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.US);
-                String timeString = hourOfDay+":"+minute;
+                timeString = hourOfDay+":"+minute;
                 try {
-                    Date pickedTime = new SimpleDateFormat("h:m", Locale.US).parse(timeString);
+                    // TimePicker always return in 0-23 hr format, so must use HH instead of hh
+                    Date pickedTime = new SimpleDateFormat("HH:mm", Locale.US).parse(timeString);
                     assert pickedTime != null;
                     String timeFormatString = timeFormat.format(pickedTime);
                     mTime.setText(timeFormatString);
@@ -106,7 +112,6 @@ public class TaskFillActivity extends AppCompatActivity {
                     Toast.makeText(this, "Please select a time and date.", Toast.LENGTH_SHORT).show();
                 // If passes all conditions, successfully submit
                 } else {
-                    Toast.makeText(this, "Successfully submitted!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent();
                     Bundle extras = new Bundle();
                     extras.putString("EXTRA_TASK_NAME", mTaskName.getText().toString());
@@ -119,7 +124,6 @@ public class TaskFillActivity extends AppCompatActivity {
                 }
             // If discard button is invisible, then simply submit
             } else {
-                Toast.makeText(this, "Successfully submitted!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 Bundle extras = new Bundle();
                 extras.putString("EXTRA_TASK_NAME", mTaskName.getText().toString());
@@ -158,14 +162,26 @@ public class TaskFillActivity extends AppCompatActivity {
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
+        if(!dateString.equals("")) {
+            String[] str = dateString.split("/");
+            month = Integer.parseInt(str[0])-1;
+            day = Integer.parseInt(str[1]);
+            year = Integer.parseInt(str[2]);
+        }
         DatePickerDialog dialog = new DatePickerDialog(TaskFillActivity.this, R.style.Theme_AppCompat_DayNight_Dialog, mDateSetListener, year, month, day);
         dialog.show();
     }
+
 
     public void showTimePicker(View view) {
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY)+1;
         int min = 0;
+        if(!timeString.equals("")) {
+            String[] str = timeString.split(":");
+            hour = Integer.parseInt(str[0]);
+            min = Integer.parseInt(str[1]);
+        }
         TimePickerDialog dialog = new TimePickerDialog(TaskFillActivity.this, 3, mTimeSetListener, hour, min, false);
         dialog.show();
     }
