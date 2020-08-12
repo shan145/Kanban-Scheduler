@@ -25,4 +25,12 @@
     <string name="clock_picture">clock picture</string>
     <string name="edit_button">Edit Button</string>
     <string name="delete_button">Delete button</string>
+    <string name="task_name_hint">Task Name</string>
+    <string name="note_optional">Note (Optional)</string>
+    <string name="set_reminder">Set Reminder</string>
+    <string name="discard">Discard</string>
+    <string name="pick_a_date">Pick a Date</string>
+    <string name="pick_a_time">Pick a Time</string>
+    <string name="cancel">Cancel</string>
+    <string name="submit">Submit</string>
 </resources>

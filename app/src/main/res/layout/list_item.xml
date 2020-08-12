@@ -91,9 +91,5 @@
                     android:fontFamily="@font/montserrat"
                     android:textSize="14sp"/>
         </RelativeLayout>
-
     </com.google.android.material.card.MaterialCardView>
-
-
-
 </LinearLayout>

@@ -24,6 +24,7 @@
         android:background="@drawable/home_grad"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:tabMaxWidth="0dp"
         app:tabTextColor="#FFFFFF" />
 
     <androidx.viewpager2.widget.ViewPager2
