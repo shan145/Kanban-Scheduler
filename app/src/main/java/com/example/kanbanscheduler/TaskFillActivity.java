@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.Locale;
 
 public class TaskFillActivity extends AppCompatActivity {
-    private static final String TAG = "MyActivity";
     private EditText mTaskName;
     private EditText mTaskDescription;
     private Button mSetReminderButton;
@@ -35,6 +34,8 @@ public class TaskFillActivity extends AppCompatActivity {
     private TimePickerDialog.OnTimeSetListener mTimeSetListener;
     private String dateString;
     private String timeString;
+    private String editEmail;
+    private int editId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +49,23 @@ public class TaskFillActivity extends AppCompatActivity {
         mDateLine = findViewById(R.id.pick_date_line);
         mTime = findViewById(R.id.pick_time);
         mTimeLine = findViewById(R.id.pick_time_line);
-        dateString="";
-        timeString="";
+
+        // Use in case of filling out form
+        Bundle b = getIntent().getExtras();
+        if(b != null) {
+            mTaskName.setText(b.getString("EXTRA_EDIT_NAME"));
+            mTaskDescription.setText(b.getString("EXTRA_EDIT_DESCRIPTION"));
+            mDate.setText(b.getString("EXTRA_EDIT_DATE"));
+            mTime.setText(b.getString("EXTRA_EDIT_TIME"));
+            editEmail = b.getString("EXTRA_EDIT_EMAIL");
+            editId = b.getInt("EXTRA_EDIT_ID");
+        }
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM", Locale.US);
                 month = month + 1;
                 dateString = month+"/"+day+"/"+year;
-                Log.d(TAG, dateString);
                 try {
                     // MM is month while mm is minutes
                     Date pickedDate = new SimpleDateFormat("MM/dd/yyyy", Locale.US).parse(dateString);
@@ -112,6 +121,49 @@ public class TaskFillActivity extends AppCompatActivity {
                     Toast.makeText(this, "Please select a time and date.", Toast.LENGTH_SHORT).show();
                 // If passes all conditions, successfully submit
                 } else {
+                    // For editing
+                    if (editEmail != null ) {
+                        Intent intent = new Intent();
+                        Bundle extras = new Bundle();
+                        extras.putString("EXTRA_RETURN_NAME", mTaskName.getText().toString());
+                        extras.putString("EXTRA_RETURN_DESCRIPTION", mTaskDescription.getText().toString());
+                        extras.putString("EXTRA_RETURN_DATE", mDate.getText().toString());
+                        extras.putString("EXTRA_RETURN_TIME", mTime.getText().toString());
+                        extras.putString("EXTRA_RETURN_EMAIL", editEmail);
+                        extras.putInt("EXTRA_RETURN_ID", editId);
+                        intent.putExtras(extras);
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    // For a new filled out form
+                    } else {
+                        Intent intent = new Intent();
+                        Bundle extras = new Bundle();
+                        extras.putString("EXTRA_TASK_NAME", mTaskName.getText().toString());
+                        extras.putString("EXTRA_TASK_DESCRIPTION", mTaskDescription.getText().toString());
+                        extras.putString("EXTRA_DATE", mDate.getText().toString());
+                        extras.putString("EXTRA_TIME", mTime.getText().toString());
+                        intent.putExtras(extras);
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
+                }
+            // If discard button is invisible, then simply submit
+            } else {
+                // For editing
+                if (editEmail != null ) {
+                    Intent intent = new Intent();
+                    Bundle extras = new Bundle();
+                    extras.putString("EXTRA_RETURN_NAME", mTaskName.getText().toString());
+                    extras.putString("EXTRA_RETURN_DESCRIPTION", mTaskDescription.getText().toString());
+                    extras.putString("EXTRA_RETURN_DATE", mDate.getText().toString());
+                    extras.putString("EXTRA_RETURN_TIME", mTime.getText().toString());
+                    extras.putString("EXTRA_RETURN_EMAIL", editEmail);
+                    extras.putInt("EXTRA_RETURN_ID", editId);
+                    intent.putExtras(extras);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                    // For a new filled out form
+                } else {
                     Intent intent = new Intent();
                     Bundle extras = new Bundle();
                     extras.putString("EXTRA_TASK_NAME", mTaskName.getText().toString());
@@ -122,17 +174,6 @@ public class TaskFillActivity extends AppCompatActivity {
                     setResult(RESULT_OK, intent);
                     finish();
                 }
-            // If discard button is invisible, then simply submit
-            } else {
-                Intent intent = new Intent();
-                Bundle extras = new Bundle();
-                extras.putString("EXTRA_TASK_NAME", mTaskName.getText().toString());
-                extras.putString("EXTRA_TASK_DESCRIPTION", mTaskDescription.getText().toString());
-                extras.putString("EXTRA_DATE", mDate.getText().toString());
-                extras.putString("EXTRA_TIME", mTime.getText().toString());
-                intent.putExtras(extras);
-                setResult(RESULT_OK, intent);
-                finish();
             }
         }
     }
@@ -162,12 +203,12 @@ public class TaskFillActivity extends AppCompatActivity {
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
-        if(!dateString.equals("")) {
-            String[] str = dateString.split("/");
-            month = Integer.parseInt(str[0])-1;
-            day = Integer.parseInt(str[1]);
-            year = Integer.parseInt(str[2]);
-        }
+//        if(!mDate.getText().toString().equals("")) {
+//            String[] str = dateString.split("/");
+//            month = Integer.parseInt(str[0])-1;
+//            day = Integer.parseInt(str[1]);
+//            year = Integer.parseInt(str[2]);
+//        }
         DatePickerDialog dialog = new DatePickerDialog(TaskFillActivity.this, R.style.Theme_AppCompat_DayNight_Dialog, mDateSetListener, year, month, day);
         dialog.show();
     }
@@ -177,11 +218,11 @@ public class TaskFillActivity extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY)+1;
         int min = 0;
-        if(!timeString.equals("")) {
-            String[] str = timeString.split(":");
-            hour = Integer.parseInt(str[0]);
-            min = Integer.parseInt(str[1]);
-        }
+//        if(!mTime.getText().toString().equals("")) {
+//            String[] str = timeString.split(":");
+//            hour = Integer.parseInt(str[0]);
+//            min = Integer.parseInt(str[1]);
+//        }
         TimePickerDialog dialog = new TimePickerDialog(TaskFillActivity.this, 3, mTimeSetListener, hour, min, false);
         dialog.show();
     }

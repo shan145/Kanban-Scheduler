@@ -1,18 +1,25 @@
 package com.example.kanbanscheduler;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Delete;
 
 import java.lang.reflect.Array;
 import java.util.List;
@@ -20,10 +27,10 @@ import java.util.List;
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskViewHolder> {
     private List<Task> mTaskList;
     private LayoutInflater mInflator;
-    private TaskViewModel mTaskViewModel;
+    private EditListener mEditListener;
+    private DeleteListener mDeleteListener;
 
     public TaskListAdapter(Context context) {
-        mTaskViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(TaskViewModel.class);
         mInflator = LayoutInflater.from(context);
     }
     @NonNull
@@ -37,6 +44,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
     public void onBindViewHolder(@NonNull TaskListAdapter.TaskViewHolder holder, int position) {
         Task mCurrent = mTaskList.get(position);
         holder.bindTo(mCurrent);
+        // holder.itemView.setOnLongClickListener();
     }
 
     @Override
@@ -55,14 +63,37 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
         notifyDataSetChanged();
     }
 
+    /*
+     * Interface to allow calling of edit button in Fragments
+     */
+    public interface EditListener {
+        void onEditClicked(int pos);
+    }
+    public void setEditListener (EditListener listener){
+        mEditListener = listener;
+    }
 
-    class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    /*
+     * Interface to allow calling of delete button in Fragments
+     */
+    public interface DeleteListener {
+        void onDeleteClicked(int pos);
+    }
+    public void setDeleteListener (DeleteListener listener) {
+        mDeleteListener = listener;
+    }
+
+    /*
+     * TaskViewHolder class that works to hold associated values from onBindViewHolder
+     */
+    class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTaskTitle;
         private TextView mTaskDescription;
         private TextView mDueDate;
         private TextView mDueTime;
         private ImageView mDeleteView;
         private ImageView mEditView;
+        private static final String TAG = "TASK_LIST_ADAPTER";
         public TaskViewHolder(View itemView, TaskListAdapter adapter) {
             super(itemView);
 
@@ -109,9 +140,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             // Remove task from associated list
-                            mTaskViewModel.deleteTask(mTaskList.get(getAdapterPosition()));
+                            mDeleteListener.onDeleteClicked(getAdapterPosition());
                             mTaskList.remove(getAdapterPosition());
-                            notifyItemRemoved(getAdapterPosition());
                         }
                     }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
@@ -124,18 +154,33 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
                 }
             });
 
-            // Set Edit View click listener
+            // Set edit view listener
             mEditView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    builder.setCancelable(true);
+                    builder.setTitle("Edit this task?");
+                    builder.setMessage("Are you sure you want to edit this task?");
+                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Remove task from associated list
+                            mEditListener.onEditClicked(getAdapterPosition());
+                        }
+                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Cancel
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
             });
         }
 
         @Override
-        public void onClick(View view) {
-
-        }
+        public void onClick(View view) {}
     }
 }
