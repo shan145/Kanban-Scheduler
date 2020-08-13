@@ -1,7 +1,5 @@
-package com.example.kanbanscheduler;
+package com.example.kanbanscheduler.fragments;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -17,17 +15,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.kanbanscheduler.R;
+import com.example.kanbanscheduler.activities.HomeActivity;
+import com.example.kanbanscheduler.activities.TaskFillActivity;
+import com.example.kanbanscheduler.adapters.TaskListAdapter;
+import com.example.kanbanscheduler.room_db.Task;
+import com.example.kanbanscheduler.models.TaskViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.Date;
 
-import static com.example.kanbanscheduler.TodoFragment.EDIT_TASK_ACTIVITY_REQUEST_CODE;
 import static android.app.Activity.RESULT_OK;
 
-public class DoneFragment extends Fragment {
-    private TaskListAdapter mAdapter;
-    private static final String TAG = "DoneFragment";
-    private TaskViewModel mViewModel;
 
-    public DoneFragment() {
+public class TodoFragment extends Fragment{
+    private static final String TAG = "TodoFragment";
+    public static final int NEW_TASK_ACTIVITY_REQUEST_CODE = 1;
+    public static final int EDIT_TASK_ACTIVITY_REQUEST_CODE = 2;
+    private TaskListAdapter mAdapter;
+    private TaskViewModel mViewModel;
+    private String email;
+
+    public TodoFragment() {
         // Required empty public constructor
     }
 
@@ -35,20 +44,26 @@ public class DoneFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_done, container, false);
+        View view = inflater.inflate(R.layout.fragment_todo, container, false);
 
-        // Initialize private variables
+        // Creating ViewModel for Fragment (shared with other fragments through requireActivity())
         mViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
 
         // Gets email from HomeActivity
         HomeActivity activity = (HomeActivity)getActivity();
         assert activity != null;
         Bundle results = activity.userEmailData();
-        String email = results.getString("EMAIL");
+        email = results.getString("EMAIL");
+        assert email != null;
+        Log.d(TAG, email);
 
-        mViewModel.getTasks("done", email).observe(getViewLifecycleOwner(), tasks -> mAdapter.setTasks(tasks));
+        // Updates cached copy of words in adapter if change to live data is observed
+        mViewModel.getTasks("todo", email).observe(getViewLifecycleOwner(), tasks -> mAdapter.setTasks(tasks));
+
+        // Initialize private variables
         RecyclerView mRecyclerView = view.findViewById(R.id.recyclerview);
         mAdapter = new TaskListAdapter(view.getContext());
+
         // Set delete listener for adapter
         mAdapter.setDeleteListener(new TaskListAdapter.DeleteListener() {
             @Override
@@ -76,11 +91,21 @@ public class DoneFragment extends Fragment {
             }
         });
 
+        // Set adapter for recycler view
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        // Use for swiping Cardview to next type
-        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), TaskFillActivity.class);
+                startActivityForResult(intent, NEW_TASK_ACTIVITY_REQUEST_CODE);
+            }
+        });
+
+        // Use for swiping CardView to next type
+        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -89,31 +114,8 @@ public class DoneFragment extends Fragment {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-                Log.d(TAG, Integer.toString(position));
                 Task task = mAdapter.getTaskAtPosition(position);
-                if(direction == ItemTouchHelper.RIGHT) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                    builder.setCancelable(true);
-                    builder.setTitle("Delete this task?");
-                    builder.setMessage("Are you sure you want to delete this task?");
-                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // Remove task from associated list
-                            mViewModel.deleteTask(task);
-                        }
-                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // Cancel
-                            mAdapter.notifyItemChanged(position);
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                } else {
-                    mViewModel.updateTaskType("progress", task.getEmail(), task.getTid());
-                }
+                mViewModel.updateTaskType("progress", task.getEmail(), task.getTid());
             }
         });
         helper.attachToRecyclerView(mRecyclerView);
@@ -124,7 +126,17 @@ public class DoneFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == EDIT_TASK_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+        if (requestCode == NEW_TASK_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            assert extras != null;
+            String taskName = extras.getString("EXTRA_TASK_NAME");
+            String taskDescription = extras.getString("EXTRA_TASK_DESCRIPTION");
+            Date taskDate = (Date) extras.getSerializable("EXTRA_DATE");
+            String taskTime = extras.getString("EXTRA_TIME");
+            assert taskName != null;
+            Task task = new Task(email, taskName, taskDescription, taskDate, taskTime, "todo");
+            mViewModel.insertTask(task);
+        } else if (requestCode == EDIT_TASK_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             assert extras != null;
             String taskName = extras.getString("EXTRA_RETURN_NAME");

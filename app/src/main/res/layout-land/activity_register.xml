@@ -6,7 +6,7 @@
     android:background="@drawable/home_grad"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".RegisterActivity">
+    tools:context=".activities.RegisterActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/home_grad"
-    tools:context=".ResetActivity">
+    tools:context=".activities.ResetActivity">
 
     <TextView
         android:id="@+id/reset_msg"

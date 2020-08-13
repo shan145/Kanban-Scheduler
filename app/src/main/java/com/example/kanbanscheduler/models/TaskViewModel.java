@@ -1,10 +1,13 @@
-package com.example.kanbanscheduler;
+package com.example.kanbanscheduler.models;
 
 import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
+import com.example.kanbanscheduler.room_db.KanbanRepository;
+import com.example.kanbanscheduler.room_db.Task;
 
 import java.util.Date;
 import java.util.List;
@@ -17,7 +20,7 @@ public class TaskViewModel extends AndroidViewModel {
         mRepository = new KanbanRepository(application);
     }
 
-    LiveData<List<Task>> getTasks(String taskType, String email) { return mRepository.getTasks(taskType, email);}
+    public LiveData<List<Task>> getTasks(String taskType, String email) { return mRepository.getTasks(taskType, email);}
 
     public void insertTask(Task task) { mRepository.insertTask(task);}
 

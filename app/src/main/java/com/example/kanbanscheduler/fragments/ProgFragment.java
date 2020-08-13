@@ -1,7 +1,5 @@
-package com.example.kanbanscheduler;
+package com.example.kanbanscheduler.fragments;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,15 +10,21 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.kanbanscheduler.R;
+import com.example.kanbanscheduler.adapters.TaskListAdapter;
+import com.example.kanbanscheduler.models.TaskViewModel;
+import com.example.kanbanscheduler.activities.HomeActivity;
+import com.example.kanbanscheduler.activities.TaskFillActivity;
+import com.example.kanbanscheduler.room_db.Task;
+
 import java.util.Date;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.kanbanscheduler.TodoFragment.EDIT_TASK_ACTIVITY_REQUEST_CODE;
+import static com.example.kanbanscheduler.fragments.TodoFragment.EDIT_TASK_ACTIVITY_REQUEST_CODE;
 
 public class ProgFragment extends Fragment {
     private static final String TAG = "ProgFragment";

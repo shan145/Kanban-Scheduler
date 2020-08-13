@@ -1,31 +1,21 @@
-package com.example.kanbanscheduler;
+package com.example.kanbanscheduler.adapters;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Delete;
 
-import java.lang.reflect.Array;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.example.kanbanscheduler.R;
+import com.example.kanbanscheduler.room_db.Task;
+
 import java.util.List;
-import java.util.Locale;
 
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskViewHolder> {
     private List<Task> mTaskList;
@@ -61,7 +51,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
         return mTaskList.get(position);
     }
 
-    void setTasks(List<Task> newTaskList) {
+    public void setTasks(List<Task> newTaskList) {
         mTaskList = newTaskList;
         notifyDataSetChanged();
     }
