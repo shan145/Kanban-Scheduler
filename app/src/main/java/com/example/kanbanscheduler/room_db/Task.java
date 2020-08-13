@@ -31,6 +31,7 @@ public class Task {
     private Date date;
 
     @ColumnInfo(name="time")
+    @TypeConverters(TimeConverters.class)
     private String time;
 
     @NonNull

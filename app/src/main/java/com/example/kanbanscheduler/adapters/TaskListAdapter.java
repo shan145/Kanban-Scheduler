@@ -3,6 +3,8 @@ package com.example.kanbanscheduler.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.kanbanscheduler.R;
 import com.example.kanbanscheduler.room_db.Task;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 
@@ -79,13 +82,11 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
     /*
      * TaskViewHolder class that works to hold associated values from onBindViewHolder
      */
-    class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
         private TextView mTaskTitle;
         private TextView mTaskDescription;
         private TextView mDueDate;
         private TextView mDueTime;
-        private ImageView mDeleteView;
-        private ImageView mEditView;
         public TaskViewHolder(View itemView, TaskListAdapter adapter) {
             super(itemView);
 
@@ -94,19 +95,19 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
             mTaskDescription = itemView.findViewById(R.id.description);
             mDueDate = itemView.findViewById(R.id.date);
             mDueTime = itemView.findViewById(R.id.time);
-            mDeleteView = itemView.findViewById(R.id.delete_button);
-            mEditView = itemView.findViewById(R.id.edit_button);
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         void bindTo(Task currentTask) {
             // Populate the TextViews with data.
             mTaskTitle.setText(currentTask.getName());
+            if(currentTask.getTaskType().equals("done")) {
+                mTaskTitle.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            }
             mTaskDescription.setText(currentTask.getDescription());
-
             // Set date drawables to invisible
             mDueDate.setText(currentTask.getDateString());
-//            mDueDate.setText(parseDateToString(currentTask.getDate()));
             if(currentTask.getDateString().equals("")) {
                 mDueDate.setVisibility(View.INVISIBLE);
             } else {
@@ -120,59 +121,33 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
             } else {
                 mDueTime.setVisibility(View.VISIBLE);
             }
-
-            // Set delete view listener
-            mDeleteView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                    builder.setCancelable(true);
-                    builder.setTitle("Delete this task?");
-                    builder.setMessage("Are you sure you want to delete this task?");
-                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // Remove task from associated list
-                            mDeleteListener.onDeleteClicked(getAdapterPosition());
-                            mTaskList.remove(getAdapterPosition());
-                        }
-                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // Cancel
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                }
-            });
-
-            // Set edit view listener
-            mEditView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                    builder.setCancelable(true);
-                    builder.setTitle("Edit this task?");
-                    builder.setMessage("Are you sure you want to edit this task?");
-                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            mEditListener.onEditClicked(getAdapterPosition());
-                        }
-                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // Cancel
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                }
-            });
         }
 
         @Override
         public void onClick(View view) {}
+
+        @Override
+        public boolean onLongClick(View view) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+            builder.setCancelable(true);
+            builder.setTitle("Edit or Delete?");
+            builder.setMessage("Would you like to edit or delete this task?");
+            builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    mEditListener.onEditClicked(getAdapterPosition());
+                }
+            }).setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // Remove task from associated list
+                    mDeleteListener.onDeleteClicked(getAdapterPosition());
+                    mTaskList.remove(getAdapterPosition());
+                }
+            }).setNeutralButton("Cancel", null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+            return true;
+        }
     }
 }

@@ -17,6 +17,7 @@
         android:layout_gravity="center"
         card_view:strokeColor="#000000"
         card_view:strokeWidth="0.5dp"
+        card_view:cardBackgroundColor="@color/card_states"
         card_view:cardCornerRadius="4dp">
         <RelativeLayout
             android:id="@+id/time_info"
@@ -24,32 +25,9 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/task"
-                android:layout_width="320dp"
+                android:layout_width="match_parent"
                 android:padding="4dp"
                 style="@style/task_descriptor" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/delete_button"
-                android:padding="4dp"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:contentDescription="@string/delete_button"
-                android:clickable="true"
-                card_view:srcCompat="@drawable/ic_delete_button"
-                android:focusable="true" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/edit_button"
-                android:padding="4dp"
-                android:layout_toLeftOf="@id/delete_button"
-                android:layout_toStartOf="@id/delete_button"
-                android:contentDescription="@string/edit_button"
-                android:clickable="true"
-                android:focusable="true"
-                card_view:srcCompat="@drawable/ic_edit_button" />
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,6 +44,7 @@
                     android:drawableStart="@drawable/ic_calendar"
                     android:drawablePadding="3dp"
                     android:padding="1dp"
+                    android:textSize="16sp"
                     android:fontFamily="@font/montserrat"/>
                 <TextView
                     android:id="@+id/time"
@@ -78,6 +57,7 @@
                     android:paddingRight="1dp"
                     android:paddingTop="1dp"
                     android:paddingBottom="1dp"
+                    android:textSize="16sp"
                     android:drawableLeft="@drawable/ic_clock"
                     android:drawableStart="@drawable/ic_clock"
                     android:fontFamily="@font/montserrat" />
@@ -89,7 +69,7 @@
                     android:id="@+id/description"
                     android:padding="4dp"
                     android:fontFamily="@font/montserrat"
-                    android:textSize="14sp"/>
+                    android:textSize="16sp"/>
         </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>
