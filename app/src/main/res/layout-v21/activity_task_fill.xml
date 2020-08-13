@@ -175,7 +175,7 @@
             android:gravity="bottom"
             android:onClick="cancelForm"
             android:text="@string/cancel"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/cancel_flicker_color"
             android:textSize="18sp" />
 
         <TextView
@@ -197,7 +197,7 @@
             android:gravity="bottom"
             android:onClick="submitForm"
             android:text="@string/submit"
-            android:textColor="@android:color/holo_blue_light"
+            android:textColor="@color/submit_flicker_color"
             android:textSize="18sp" />
     </RelativeLayout>
 </ScrollView>
