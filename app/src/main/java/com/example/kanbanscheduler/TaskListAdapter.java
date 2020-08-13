@@ -22,7 +22,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Delete;
 
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskViewHolder> {
     private List<Task> mTaskList;
@@ -93,7 +96,6 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
         private TextView mDueTime;
         private ImageView mDeleteView;
         private ImageView mEditView;
-        private static final String TAG = "TASK_LIST_ADAPTER";
         public TaskViewHolder(View itemView, TaskListAdapter adapter) {
             super(itemView);
 
@@ -113,8 +115,9 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
             mTaskDescription.setText(currentTask.getDescription());
 
             // Set date drawables to invisible
-            mDueDate.setText(currentTask.getDate());
-            if(currentTask.getDate().equals("")) {
+            mDueDate.setText(currentTask.getDateString());
+//            mDueDate.setText(parseDateToString(currentTask.getDate()));
+            if(currentTask.getDateString().equals("")) {
                 mDueDate.setVisibility(View.INVISIBLE);
             } else {
                 mDueDate.setVisibility(View.VISIBLE);
@@ -165,7 +168,6 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
                     builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            // Remove task from associated list
                             mEditListener.onEditClicked(getAdapterPosition());
                         }
                     }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

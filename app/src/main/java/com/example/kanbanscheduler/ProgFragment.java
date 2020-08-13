@@ -17,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Date;
+
 import static android.app.Activity.RESULT_OK;
 import static com.example.kanbanscheduler.TodoFragment.EDIT_TASK_ACTIVITY_REQUEST_CODE;
 
@@ -65,7 +67,7 @@ public class ProgFragment extends Fragment {
                 Bundle b = new Bundle();
                 b.putString("EXTRA_EDIT_NAME", task.getName());
                 b.putString("EXTRA_EDIT_DESCRIPTION", task.getDescription());
-                b.putString("EXTRA_EDIT_DATE", task.getDate());
+                b.putString("EXTRA_EDIT_DATE", task.getDateString());
                 b.putString("EXTRA_EDIT_TIME", task.getTime());
                 b.putString("EXTRA_EDIT_EMAIL", task.getEmail());
                 b.putInt("EXTRA_EDIT_ID", task.getTid());
@@ -108,7 +110,7 @@ public class ProgFragment extends Fragment {
             assert extras != null;
             String taskName = extras.getString("EXTRA_RETURN_NAME");
             String taskDescription = extras.getString("EXTRA_RETURN_DESCRIPTION");
-            String taskDate = extras.getString("EXTRA_RETURN_DATE");
+            Date taskDate = (Date) extras.getSerializable("EXTRA_RETURN_DATE");
             String taskTime = extras.getString("EXTRA_RETURN_TIME");
             String taskEmail = extras.getString("EXTRA_RETURN_EMAIL");
             int taskId = extras.getInt("EXTRA_RETURN_ID");

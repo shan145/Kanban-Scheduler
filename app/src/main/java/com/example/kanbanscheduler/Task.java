@@ -6,6 +6,12 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 @Entity(tableName="task_table")
 public class Task {
@@ -24,7 +30,8 @@ public class Task {
     private String description;
 
     @ColumnInfo(name="date")
-    private String date;
+    @TypeConverters(DateConverters.class)
+    private Date date;
 
     @ColumnInfo(name="time")
     private String time;
@@ -33,7 +40,7 @@ public class Task {
     @ColumnInfo(name="task_type")
     private String taskType;
 
-    public Task(@NonNull String email, @NonNull String name, String description, String date, String time, @NonNull String taskType) {
+    public Task(@NonNull String email, @NonNull String name, String description, Date date, String time, @NonNull String taskType) {
         this.email=email;
         this.name=name;
         this.description=description;
@@ -57,8 +64,16 @@ public class Task {
         return this.description;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return this.date;
+    }
+
+    public String getDateString() {
+        if(this.date != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+            return dateFormat.format(this.date);
+        }
+        return "";
     }
 
     public String getTime() {

@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
+import java.util.Date;
 import java.util.List;
 
 public class KanbanRepository {
@@ -37,7 +38,7 @@ public class KanbanRepository {
         });
     }
 
-    void updateTask(String taskName, String description, String date, String time, String emailAddress, int tid) {
+    void updateTask(String taskName, String description, Date date, String time, String emailAddress, int tid) {
         KanbanRoomDatabase.databaseWriteExecutor.execute(() -> {
             mTaskDao.updateTask(taskName, description, date, time, emailAddress, tid);
         });

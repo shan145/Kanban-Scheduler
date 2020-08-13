@@ -5,11 +5,13 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Task.class}, version=3, exportSchema = false)
+@Database(entities = {Task.class}, version=10, exportSchema = false)
+@TypeConverters({DateConverters.class})
 public abstract class KanbanRoomDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
 

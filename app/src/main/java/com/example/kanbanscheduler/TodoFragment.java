@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Date;
+
 import static android.app.Activity.RESULT_OK;
 
 
@@ -76,7 +78,7 @@ public class TodoFragment extends Fragment{
                 Bundle b = new Bundle();
                 b.putString("EXTRA_EDIT_NAME", task.getName());
                 b.putString("EXTRA_EDIT_DESCRIPTION", task.getDescription());
-                b.putString("EXTRA_EDIT_DATE", task.getDate());
+                b.putString("EXTRA_EDIT_DATE", task.getDateString());
                 b.putString("EXTRA_EDIT_TIME", task.getTime());
                 b.putString("EXTRA_EDIT_EMAIL", task.getEmail());
                 b.putInt("EXTRA_EDIT_ID", task.getTid());
@@ -125,7 +127,7 @@ public class TodoFragment extends Fragment{
             assert extras != null;
             String taskName = extras.getString("EXTRA_TASK_NAME");
             String taskDescription = extras.getString("EXTRA_TASK_DESCRIPTION");
-            String taskDate = extras.getString("EXTRA_DATE");
+            Date taskDate = (Date) extras.getSerializable("EXTRA_DATE");
             String taskTime = extras.getString("EXTRA_TIME");
             assert taskName != null;
             Task task = new Task(email, taskName, taskDescription, taskDate, taskTime, "todo");
@@ -135,7 +137,7 @@ public class TodoFragment extends Fragment{
             assert extras != null;
             String taskName = extras.getString("EXTRA_RETURN_NAME");
             String taskDescription = extras.getString("EXTRA_RETURN_DESCRIPTION");
-            String taskDate = extras.getString("EXTRA_RETURN_DATE");
+            Date taskDate = (Date) extras.getSerializable("EXTRA_RETURN_DATE");
             String taskTime = extras.getString("EXTRA_RETURN_TIME");
             String taskEmail = extras.getString("EXTRA_RETURN_EMAIL");
             int taskId = extras.getInt("EXTRA_RETURN_ID");

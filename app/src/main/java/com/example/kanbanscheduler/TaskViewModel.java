@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import java.util.Date;
 import java.util.List;
 
 public class TaskViewModel extends AndroidViewModel {
@@ -24,5 +25,5 @@ public class TaskViewModel extends AndroidViewModel {
 
     public void updateTaskType(String taskType, String email, int taskId) { mRepository.updateTaskType(taskType, email, taskId);}
 
-    public void updateTask(String taskName, String description, String date, String time, String emailAddress, int tid) { mRepository.updateTask(taskName, description, date, time, emailAddress, tid); }
+    public void updateTask(String taskName, String description, Date date, String time, String emailAddress, int tid) { mRepository.updateTask(taskName, description, date, time, emailAddress, tid); }
 }

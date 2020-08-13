@@ -32,8 +32,6 @@ public class TaskFillActivity extends AppCompatActivity {
     private View mTimeLine;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private TimePickerDialog.OnTimeSetListener mTimeSetListener;
-    private String dateString;
-    private String timeString;
     private String editEmail;
     private int editId;
 
@@ -56,32 +54,30 @@ public class TaskFillActivity extends AppCompatActivity {
             mTaskName.setText(b.getString("EXTRA_EDIT_NAME"));
             mTaskDescription.setText(b.getString("EXTRA_EDIT_DESCRIPTION"));
             mDate.setText(b.getString("EXTRA_EDIT_DATE"));
+            // mDate.setText(parseDateToString((Date)b.getSerializable("EXTRA_EDIT_DATE")));
             mTime.setText(b.getString("EXTRA_EDIT_TIME"));
             editEmail = b.getString("EXTRA_EDIT_EMAIL");
             editId = b.getInt("EXTRA_EDIT_ID");
+            // If date isn't empty, then show it reminder tags.
+            if(!mDate.getText().toString().equals("")) {
+                showReminder(mSetReminderButton);
+            }
         }
+
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM", Locale.US);
-                month = month + 1;
-                dateString = month+"/"+day+"/"+year;
-                try {
-                    // MM is month while mm is minutes
-                    Date pickedDate = new SimpleDateFormat("MM/dd/yyyy", Locale.US).parse(dateString);
-                    assert pickedDate != null;
-                    String dateFormatString = dateFormat.format(pickedDate);
-                    mDate.setText(dateFormatString);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                month++;
+                String pickedDate = month+"/"+day+"/"+year;
+                mDate.setText(pickedDate);
             }
         };
+
         mTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
                 SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.US);
-                timeString = hourOfDay+":"+minute;
+                String timeString = hourOfDay+":"+minute;
                 try {
                     // TimePicker always return in 0-23 hr format, so must use HH instead of hh
                     Date pickedTime = new SimpleDateFormat("HH:mm", Locale.US).parse(timeString);
@@ -127,7 +123,7 @@ public class TaskFillActivity extends AppCompatActivity {
                         Bundle extras = new Bundle();
                         extras.putString("EXTRA_RETURN_NAME", mTaskName.getText().toString());
                         extras.putString("EXTRA_RETURN_DESCRIPTION", mTaskDescription.getText().toString());
-                        extras.putString("EXTRA_RETURN_DATE", mDate.getText().toString());
+                        extras.putSerializable("EXTRA_RETURN_DATE", parseDateString(mDate.getText().toString()));
                         extras.putString("EXTRA_RETURN_TIME", mTime.getText().toString());
                         extras.putString("EXTRA_RETURN_EMAIL", editEmail);
                         extras.putInt("EXTRA_RETURN_ID", editId);
@@ -140,7 +136,7 @@ public class TaskFillActivity extends AppCompatActivity {
                         Bundle extras = new Bundle();
                         extras.putString("EXTRA_TASK_NAME", mTaskName.getText().toString());
                         extras.putString("EXTRA_TASK_DESCRIPTION", mTaskDescription.getText().toString());
-                        extras.putString("EXTRA_DATE", mDate.getText().toString());
+                        extras.putSerializable("EXTRA_DATE", parseDateString(mDate.getText().toString()));
                         extras.putString("EXTRA_TIME", mTime.getText().toString());
                         intent.putExtras(extras);
                         setResult(RESULT_OK, intent);
@@ -155,7 +151,7 @@ public class TaskFillActivity extends AppCompatActivity {
                     Bundle extras = new Bundle();
                     extras.putString("EXTRA_RETURN_NAME", mTaskName.getText().toString());
                     extras.putString("EXTRA_RETURN_DESCRIPTION", mTaskDescription.getText().toString());
-                    extras.putString("EXTRA_RETURN_DATE", mDate.getText().toString());
+                    extras.putSerializable("EXTRA_RETURN_DATE", parseDateString(mDate.getText().toString()));
                     extras.putString("EXTRA_RETURN_TIME", mTime.getText().toString());
                     extras.putString("EXTRA_RETURN_EMAIL", editEmail);
                     extras.putInt("EXTRA_RETURN_ID", editId);
@@ -168,7 +164,7 @@ public class TaskFillActivity extends AppCompatActivity {
                     Bundle extras = new Bundle();
                     extras.putString("EXTRA_TASK_NAME", mTaskName.getText().toString());
                     extras.putString("EXTRA_TASK_DESCRIPTION", mTaskDescription.getText().toString());
-                    extras.putString("EXTRA_DATE", mDate.getText().toString());
+                    extras.putSerializable("EXTRA_DATE", parseDateString(mDate.getText().toString()));
                     extras.putString("EXTRA_TIME", mTime.getText().toString());
                     intent.putExtras(extras);
                     setResult(RESULT_OK, intent);
@@ -203,12 +199,13 @@ public class TaskFillActivity extends AppCompatActivity {
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
-//        if(!mDate.getText().toString().equals("")) {
-//            String[] str = dateString.split("/");
-//            month = Integer.parseInt(str[0])-1;
-//            day = Integer.parseInt(str[1]);
-//            year = Integer.parseInt(str[2]);
-//        }
+        String currentDate = mDate.getText().toString();
+        if(!currentDate.equals("")) {
+            String[] str = currentDate.split("/");
+            month = Integer.parseInt(str[0])-1;
+            day = Integer.parseInt(str[1]);
+            year = Integer.parseInt(str[2]);
+        }
         DatePickerDialog dialog = new DatePickerDialog(TaskFillActivity.this, R.style.Theme_AppCompat_DayNight_Dialog, mDateSetListener, year, month, day);
         dialog.show();
     }
@@ -218,12 +215,40 @@ public class TaskFillActivity extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY)+1;
         int min = 0;
-//        if(!mTime.getText().toString().equals("")) {
-//            String[] str = timeString.split(":");
-//            hour = Integer.parseInt(str[0]);
-//            min = Integer.parseInt(str[1]);
-//        }
+        String currentTime = mTime.getText().toString();
+        if(!currentTime.equals("")) {
+            String timeString = parseCurrentTime(currentTime);
+            String[] str = timeString.split(":");
+            hour = Integer.parseInt(str[0]);
+            min = Integer.parseInt(str[1]);
+        }
         TimePickerDialog dialog = new TimePickerDialog(TaskFillActivity.this, 3, mTimeSetListener, hour, min, false);
         dialog.show();
+    }
+
+    // Reverse time from AM/PM to 24 hour format for TimePickerDialog
+    private String parseCurrentTime(String timeString) {
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
+        try {
+            // TimePicker always return in 0-23 hr format, so must use HH instead of hh
+            Date pickedTime = new SimpleDateFormat("hh:mm a", Locale.US).parse(timeString);
+            assert pickedTime != null;
+            return timeFormat.format(pickedTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    // Changes date string to Date for DB use
+    private Date parseDateString(String dateString) {
+        try {
+            Date d = new SimpleDateFormat("MM/dd/yyyy", Locale.US).parse(dateString);
+            assert d != null;
+            return d;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
