@@ -105,19 +105,27 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
             if(currentTask.getTaskType().equals("done")) {
                 mTaskTitle.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             }
+
+            // Make description space disappear if empty string
             mTaskDescription.setText(currentTask.getDescription());
-            // Set date drawables to invisible
+            if(currentTask.getDescription().equals("")) {
+                mTaskDescription.setVisibility(View.GONE);
+            } else {
+                mTaskDescription.setVisibility(View.VISIBLE);
+            }
+
+            // Make date disappear if empty string
             mDueDate.setText(currentTask.getDateString());
             if(currentTask.getDateString().equals("")) {
-                mDueDate.setVisibility(View.INVISIBLE);
+                mDueDate.setVisibility(View.GONE);
             } else {
                 mDueDate.setVisibility(View.VISIBLE);
             }
 
-            // Set time drawables to invisible
+            // Make time disappear if empty string
             mDueTime.setText(currentTask.getTime());
             if(currentTask.getTime().equals("")) {
-                mDueTime.setVisibility(View.INVISIBLE);
+                mDueTime.setVisibility(View.GONE);
             } else {
                 mDueTime.setVisibility(View.VISIBLE);
             }
