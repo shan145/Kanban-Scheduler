@@ -1,4 +1,4 @@
-package com.example.kanbanscheduler;
+package com.example.kanbanscheduler.room_db;
 
 import androidx.room.TypeConverter;
 

@@ -1,11 +1,8 @@
-package com.example.kanbanscheduler;
+package com.example.kanbanscheduler.room_db;
 
 import androidx.room.TypeConverter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class DateConverters {
     @TypeConverter

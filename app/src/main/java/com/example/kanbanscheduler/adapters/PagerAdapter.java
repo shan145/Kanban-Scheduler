@@ -1,14 +1,14 @@
-package com.example.kanbanscheduler;
-
-import android.view.MotionEvent;
+package com.example.kanbanscheduler.adapters;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import com.example.kanbanscheduler.fragments.ProgFragment;
+import com.example.kanbanscheduler.fragments.TodoFragment;
+import com.example.kanbanscheduler.fragments.DoneFragment;
 
 public class PagerAdapter extends FragmentStateAdapter {
     int mNumOfTabs;

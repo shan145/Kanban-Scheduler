@@ -5,7 +5,7 @@
     android:background="@drawable/home_grad"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,11 +49,12 @@
 
     <Button
         android:id="@+id/register"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="48dp"
         android:layout_marginTop="215dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_centerHorizontal="true"
         android:layout_below="@id/slogan"
         android:background="@drawable/bubble_button"
         android:fontFamily="@font/montserrat"
@@ -65,11 +66,12 @@
 
     <Button
         android:id="@+id/login"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="48dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_centerHorizontal="true"
         android:layout_below="@id/register"
         android:background="@drawable/bubble_button"
         android:fontFamily="@font/montserrat"

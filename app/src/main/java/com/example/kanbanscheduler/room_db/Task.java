@@ -1,12 +1,9 @@
-package com.example.kanbanscheduler;
+package com.example.kanbanscheduler.room_db;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
-import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 
 import java.text.SimpleDateFormat;
@@ -34,6 +31,7 @@ public class Task {
     private Date date;
 
     @ColumnInfo(name="time")
+    @TypeConverters(TimeConverters.class)
     private String time;
 
     @NonNull

@@ -1,4 +1,4 @@
-package com.example.kanbanscheduler;
+package com.example.kanbanscheduler.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -17,17 +17,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.kanbanscheduler.R;
+import com.example.kanbanscheduler.room_db.Task;
+import com.example.kanbanscheduler.activities.TaskFillActivity;
+import com.example.kanbanscheduler.adapters.TaskListAdapter;
+import com.example.kanbanscheduler.models.TaskViewModel;
+import com.example.kanbanscheduler.activities.HomeActivity;
+
 import java.util.Date;
 
+import static com.example.kanbanscheduler.fragments.TodoFragment.EDIT_TASK_ACTIVITY_REQUEST_CODE;
 import static android.app.Activity.RESULT_OK;
-import static com.example.kanbanscheduler.TodoFragment.EDIT_TASK_ACTIVITY_REQUEST_CODE;
 
-public class ProgFragment extends Fragment {
-    private static final String TAG = "ProgFragment";
+public class DoneFragment extends Fragment {
     private TaskListAdapter mAdapter;
+    private static final String TAG = "DoneFragment";
     private TaskViewModel mViewModel;
 
-    public ProgFragment() {
+    public DoneFragment() {
         // Required empty public constructor
     }
 
@@ -35,7 +42,7 @@ public class ProgFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_prog, container, false);
+        View view = inflater.inflate(R.layout.fragment_done, container, false);
 
         // Initialize private variables
         mViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
@@ -46,7 +53,7 @@ public class ProgFragment extends Fragment {
         Bundle results = activity.userEmailData();
         String email = results.getString("EMAIL");
 
-        mViewModel.getTasks("progress", email).observe(getViewLifecycleOwner(), tasks -> mAdapter.setTasks(tasks));
+        mViewModel.getTasks("done", email).observe(getViewLifecycleOwner(), tasks -> mAdapter.setTasks(tasks));
         RecyclerView mRecyclerView = view.findViewById(R.id.recyclerview);
         mAdapter = new TaskListAdapter(view.getContext());
         // Set delete listener for adapter
@@ -79,7 +86,7 @@ public class ProgFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        // Use for swiping Cardview to next type
+        // Use for swiping CardView to next type
         ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -89,11 +96,30 @@ public class ProgFragment extends Fragment {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
+                Log.d(TAG, Integer.toString(position));
                 Task task = mAdapter.getTaskAtPosition(position);
                 if(direction == ItemTouchHelper.RIGHT) {
-                    mViewModel.updateTaskType("done", task.getEmail(), task.getTid());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    builder.setCancelable(true);
+                    builder.setTitle("Delete this task?");
+                    builder.setMessage("Are you sure you want to delete this task?");
+                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Remove task from associated list
+                            mViewModel.deleteTask(task);
+                        }
+                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Cancel
+                            mAdapter.notifyItemChanged(position);
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 } else {
-                    mViewModel.updateTaskType("todo", task.getEmail(), task.getTid());
+                    mViewModel.updateTaskType("progress", task.getEmail(), task.getTid());
                 }
             }
         });

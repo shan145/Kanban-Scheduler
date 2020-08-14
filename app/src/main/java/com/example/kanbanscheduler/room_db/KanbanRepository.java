@@ -1,4 +1,4 @@
-package com.example.kanbanscheduler;
+package com.example.kanbanscheduler.room_db;
 
 import android.app.Application;
 
@@ -10,35 +10,35 @@ import java.util.List;
 public class KanbanRepository {
     private TaskDao mTaskDao;
 
-    KanbanRepository(Application application) {
+    public KanbanRepository(Application application) {
         KanbanRoomDatabase db = KanbanRoomDatabase.getDatabase(application);
         mTaskDao = db.taskDao();
     }
 
     // Observed LiveData will notify observer when data has changed
-    LiveData<List<Task>> getTasks(String taskType, String email) {
+    public LiveData<List<Task>> getTasks(String taskType, String email) {
         return mTaskDao.getTasks(taskType, email);
     }
 
-    void insertTask(Task task) {
+    public void insertTask(Task task) {
         KanbanRoomDatabase.databaseWriteExecutor.execute(() -> {
             mTaskDao.insert(task);
         });
     }
 
-    void deleteTask(Task task) {
+    public void deleteTask(Task task) {
         KanbanRoomDatabase.databaseWriteExecutor.execute(() -> {
             mTaskDao.delete(task);
         });
     }
 
-    void updateTaskType(String taskType, String email, int taskId) {
+    public void updateTaskType(String taskType, String email, int taskId) {
         KanbanRoomDatabase.databaseWriteExecutor.execute(() -> {
             mTaskDao.updateTaskType(taskType, email, taskId);
         });
     }
 
-    void updateTask(String taskName, String description, Date date, String time, String emailAddress, int tid) {
+    public void updateTask(String taskName, String description, Date date, String time, String emailAddress, int tid) {
         KanbanRoomDatabase.databaseWriteExecutor.execute(() -> {
             mTaskDao.updateTask(taskName, description, date, time, emailAddress, tid);
         });

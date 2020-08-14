@@ -1,4 +1,4 @@
-package com.example.kanbanscheduler;
+package com.example.kanbanscheduler.room_db;
 
 import android.content.Context;
 
@@ -10,8 +10,8 @@ import androidx.room.TypeConverters;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Task.class}, version=10, exportSchema = false)
-@TypeConverters({DateConverters.class})
+@Database(entities = {Task.class}, version=11, exportSchema = false)
+@TypeConverters({DateConverters.class, TimeConverters.class})
 public abstract class KanbanRoomDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
 
