@@ -12,7 +12,23 @@
             <item
                 android:id="@+id/action_logout"
                 android:title="@string/logout_cap"
+                android:orderInCategory="100"
                 app:showAsAction="never"/>
+<!--            <item-->
+<!--                android:id="@+id/week"-->
+<!--                android:title="Week"-->
+<!--                android:orderInCategory="10"-->
+<!--                app:showAsAction="never"/>-->
+<!--            <item-->
+<!--                android:id="@+id/month"-->
+<!--                android:title="Month"-->
+<!--                android:orderInCategory="20"-->
+<!--                app:showAsAction="never"/>-->
+<!--            <item-->
+<!--                android:id="@+id/all_time"-->
+<!--                android:title="All time"-->
+<!--                android:orderInCategory="30"-->
+<!--                app:showAsAction="never"/>-->
         </menu>
     </item>
 

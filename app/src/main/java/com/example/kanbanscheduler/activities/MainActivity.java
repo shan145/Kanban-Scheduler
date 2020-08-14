@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     // Updates UI to homepage if user is already signed in
     public void updateUI(FirebaseUser user) {
         if(user != null) {
-            Intent intent = new Intent(this, HomeActivity.class);
+            Intent intent = new Intent(this, DashboardActivity.class);
             startActivity(intent);
             finish();
         }

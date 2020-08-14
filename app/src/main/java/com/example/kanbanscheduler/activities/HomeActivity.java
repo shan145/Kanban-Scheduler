@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.kanbanscheduler.adapters.PagerAdapter;
 import com.example.kanbanscheduler.R;
@@ -37,6 +38,7 @@ public class HomeActivity extends AppCompatActivity {
         final ViewPager2 viewPager = findViewById(R.id.pager);
         final PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(),getLifecycle(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
+
         //Setting a listener for clicks.
         viewPager.setUserInputEnabled(false);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
