@@ -11,6 +11,7 @@
         android:layout_height="wrap_content">
         <!-- For box containing data -->
         <RelativeLayout
+            android:id="@+id/dashboard_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -108,7 +109,11 @@
                 android:textSize="16sp"
                 android:text="Done\n3"/>
         </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/dashboard_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/dashboard_view" />
     </RelativeLayout>
-
-
 </ScrollView>
