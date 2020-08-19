@@ -1,15 +1,22 @@
 package com.example.kanbanscheduler.activities;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Layout;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -52,9 +59,39 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mTopicData = new ArrayList<>();
         mAdapter = new TopicGridAdapter(this, mTopicData);
-        mRecyclerView.setAdapter(mAdapter);
+        // Used to initialize data at first
         initializeData();
-
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.setClickListener(new TopicGridAdapter.ClickListener() {
+            @Override
+            public void onClicked(int pos, Context context) {
+                int topicSize = mTopicData.size();
+                Topic topic = mTopicData.get(pos);
+                LinearLayout container = new LinearLayout(context);
+                container.setOrientation(LinearLayout.VERTICAL);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                lp.setMargins(40, 15, 40, 15);
+                EditText topicText = new EditText(context);
+                topicText.setLayoutParams(lp);
+                topicText.setMaxEms(20);
+                container.addView(topicText);
+                if(topic.getTopicName().equals("+Add")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Enter a Topic Name:");
+                    builder.setView(container)
+                            .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    String topicName = topicText.getText().toString();
+                                    mTopicData.add(topicSize-1, new Topic(topicName));
+                                    mAdapter.notifyItemInserted(topicSize-1);
+                                }
+                            }).setNegativeButton("Cancel", null);
+                    AlertDialog build = builder.create();
+                    build.show();
+                }
+            }
+        });
     }
 
     @Override
@@ -65,10 +102,7 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
 
     private void initializeData() {
         mTopicData.clear();
-        mTopicData.add(new Topic("+ Add"));
-        for(int i = 0; i < 8; i++) {
-            mTopicData.add(new Topic("Personal"));
-        }
+        mTopicData.add(new Topic("+Add"));
         mAdapter.notifyDataSetChanged();
     }
 }

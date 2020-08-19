@@ -5,19 +5,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.kanbanscheduler.R;
 import com.example.kanbanscheduler.room_db.Topic;
 
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class TopicGridAdapter extends RecyclerView.Adapter<TopicGridAdapter.TopicViewHolder> {
     private ArrayList<Topic> mTopicList;
     private LayoutInflater mInflator;
+    private ClickListener mClickListener;
 
     public TopicGridAdapter(Context context, ArrayList<Topic> topicData) {
         this.mInflator = LayoutInflater.from(context);
@@ -43,14 +43,31 @@ public class TopicGridAdapter extends RecyclerView.Adapter<TopicGridAdapter.Topi
         return 0;
     }
 
-    class TopicViewHolder extends RecyclerView.ViewHolder {
+    /*
+     * Interface to allow calling of edit button in Fragments
+     */
+    public interface ClickListener {
+        void onClicked(int pos, Context context);
+    }
+    public void setClickListener (TopicGridAdapter.ClickListener listener){
+        mClickListener = listener;
+    }
+
+    class TopicViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTopicName;
         public TopicViewHolder(View itemView, TopicGridAdapter adapter) {
             super(itemView);
             mTopicName = itemView.findViewById(R.id.topic);
+            itemView.setOnClickListener(this);
         }
+
         void bindTo(Topic currentTopic) {
             mTopicName.setText(currentTopic.getTopicName());
+        }
+
+        @Override
+        public void onClick(View view) {
+            mClickListener.onClicked(getAdapterPosition(), view.getContext());
         }
     }
 }
