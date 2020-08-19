@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/topic_home"
+        android:enabled="true"
+        android:icon="@drawable/ic_topic_home"
+        android:title="@string/home"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/add_topic"
+        android:enabled="true"
+        android:icon="@drawable/ic_add_topic"
+        android:title="@string/add_topic"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/task_today"
+        android:enabled="true"
+        android:icon="@drawable/ic_topic_today"
+        android:title="@string/today_s_tasks"
+        app:showAsAction="always"/>
+</menu>

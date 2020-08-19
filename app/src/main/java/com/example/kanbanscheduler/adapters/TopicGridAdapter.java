@@ -12,16 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.kanbanscheduler.R;
 import com.example.kanbanscheduler.room_db.Topic;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class TopicGridAdapter extends RecyclerView.Adapter<TopicGridAdapter.TopicViewHolder> {
-    private ArrayList<Topic> mTopicList;
+    private List<Topic> mTopicList;
     private LayoutInflater mInflator;
     private ClickListener mClickListener;
 
-    public TopicGridAdapter(Context context, ArrayList<Topic> topicData) {
+    public TopicGridAdapter(Context context) {
         this.mInflator = LayoutInflater.from(context);
-        this.mTopicList=topicData;
     }
 
     @NonNull
@@ -41,6 +40,12 @@ public class TopicGridAdapter extends RecyclerView.Adapter<TopicGridAdapter.Topi
     public int getItemCount() {
         if(mTopicList != null) return mTopicList.size();
         return 0;
+    }
+
+    public Topic getTopicAtPosition(int position) { return mTopicList.get(position); }
+    public void setTopics(List<Topic> newTopicList) {
+        mTopicList = newTopicList;
+        notifyDataSetChanged();
     }
 
     /*

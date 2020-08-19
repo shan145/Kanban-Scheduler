@@ -33,6 +33,9 @@
     <string name="pick_a_time">Pick a Time</string>
     <string name="cancel">Cancel</string>
     <string name="submit">Submit</string>
+    <string name="home">Home</string>
+    <string name="add_topic">Add Topic</string>
+    <string name="today_s_tasks">Today\'s Tasks</string>
     <string-array name="dates_array">
         <item>Today</item>
         <item>Weekly</item>
