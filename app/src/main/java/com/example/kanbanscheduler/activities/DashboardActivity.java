@@ -75,7 +75,7 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
             @Override
             public void onClicked(int pos, Context context) {
                 Topic topic = mAdapter.getTopicAtPosition(pos);
-                Toast.makeText(context, topic.getTopicName(), Toast.LENGTH_SHORT).show();
+                mTopicViewModel.deleteTopic(topic);
             }
         });
 
@@ -101,8 +101,12 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
                                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        String topicName = topicText.getText().toString();
-                                        mTopicViewModel.insertTopic(new Topic(topicName));
+                                        String topicName = topicText.getText().toString().trim();
+                                        if(mAdapter.inTopicList(topicName)) {
+                                            Toast.makeText(DashboardActivity.this, "Unable to get add topic. The topic name may already exist.", Toast.LENGTH_LONG).show();
+                                        } else {
+                                            mTopicViewModel.insertTopic(new Topic(topicName));
+                                        }
                                     }
                                 }).setNegativeButton("Cancel", null);
                         AlertDialog build = builder.create();
