@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".activities.DashboardActivity">
     <ScrollView
+        android:id="@+id/scroll_layout"
         android:layout_above="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
