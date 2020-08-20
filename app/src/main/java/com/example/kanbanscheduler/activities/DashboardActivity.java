@@ -6,13 +6,16 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +23,7 @@ import android.text.InputFilter;
 import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,6 +42,8 @@ import com.example.kanbanscheduler.models.TopicViewModel;
 import com.example.kanbanscheduler.room_db.Topic;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
@@ -52,12 +58,17 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
     private TopicGridAdapter mAdapter;
     private TopicViewModel mTopicViewModel;
     private DrawerLayout mDrayerLayout;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTopicViewModel = new ViewModelProvider(this).get(TopicViewModel.class);
         setContentView(R.layout.activity_dashboard);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        configureToolBar();
+        configureNavigationDrawer();
+        mDrayerLayout = findViewById(R.id.drawer_layout);
+        mTopicViewModel = new ViewModelProvider(this).get(TopicViewModel.class);
         mProgressBar = findViewById(R.id.circular_progress_bar);
         mProgressText = findViewById(R.id.progress_percent);
         mTodoCount = findViewById(R.id.total_todo);
@@ -134,4 +145,50 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {}
+
+    private void configureToolBar() {
+        Toolbar navToolbar = findViewById(R.id.nav_toolbar);
+        setSupportActionBar(navToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void configureNavigationDrawer() {
+        NavigationView navView = findViewById(R.id.nav_view);
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
+                switch(itemId) {
+                    case R.id.dashboard:
+                        Toast.makeText(DashboardActivity.this, "You pressed Dashboard!", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.logout:
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(DashboardActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                        break;
+                }
+                mDrayerLayout.closeDrawers();
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        switch(itemId) {
+            //Android Home
+            case android.R.id.home:
+                mDrayerLayout.openDrawer(GravityCompat.START);
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
 }

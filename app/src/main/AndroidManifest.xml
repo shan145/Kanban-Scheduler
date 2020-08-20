@@ -10,13 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.DashboardActivity"/>
-        <activity android:name=".activities.TaskFillActivity" android:theme="@style/Theme.Design.NoActionBar"/>
-        <activity android:name=".activities.ResetActivity" android:theme="@style/Theme.Design.NoActionBar"/>
-        <activity android:name=".activities.HomeActivity" android:theme="@style/Theme.Design.NoActionBar"/>
+        <activity android:name=".activities.TaskFillActivity" />
+        <activity android:name=".activities.ResetActivity" />
+        <activity android:name=".activities.HomeActivity" />
         <activity
             android:name=".activities.LoginActivity"
             android:label="Login Activity"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -24,15 +23,13 @@
         </activity>
         <activity
             android:name=".activities.RegisterActivity"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:label="Register Activity"
             android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.MainActivity"
-            android:theme="@style/Theme.Design.NoActionBar">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
