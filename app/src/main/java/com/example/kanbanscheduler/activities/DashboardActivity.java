@@ -94,14 +94,23 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
         mTopicViewModel.getTopics().observe(this, topics -> mAdapter.setTopics(topics));
         mRecyclerView.setAdapter(mAdapter);
         // Sets up adapter to listen to clicks
-        mAdapter.setClickListener(new TopicGridAdapter.ClickListener() {
-            @Override
-            public void onClicked(int pos, Context context) {
+        mAdapter.setClickListener((pos, context) -> {
+            Topic topic = mAdapter.getTopicAtPosition(pos);
+            Intent intent = new Intent(DashboardActivity.this, TaskActivity.class);
+            intent.putExtra("EXTRA_TOPIC_NAME", topic.getTopicName());
+            startActivity(intent);
+        });
+        mAdapter.setLongClickListener(pos -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+            builder.setCancelable(true);
+            builder.setTitle("Delete the topic?");
+            builder.setMessage("Would you like to delete this topic?");
+            builder.setPositiveButton("Delete", (dialogInterface, i) -> {
                 Topic topic = mAdapter.getTopicAtPosition(pos);
-                Intent intent = new Intent(DashboardActivity.this, TaskActivity.class);
-                intent.putExtra("EXTRA_TOPIC_NAME", topic.getTopicName());
-                startActivity(intent);
-            }
+                mTopicViewModel.deleteTopic(topic);
+            }).setNegativeButton("Cancel", null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
         });
 
         // Setting up bottom navigation

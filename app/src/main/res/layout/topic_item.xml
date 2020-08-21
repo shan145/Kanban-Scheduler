@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:theme="@style/Theme.MaterialComponents.DayNight"
         android:layout_margin="15dp"
-        card_view:cardCornerRadius="15dp">
+        card_view:cardCornerRadius="15dp"
+        card_view:cardForegroundColor="@color/card_states">
         <TextView
             android:id="@+id/topic"
             android:layout_width="175dp"
