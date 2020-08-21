@@ -45,6 +45,8 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
@@ -58,17 +60,21 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
     private TopicGridAdapter mAdapter;
     private TopicViewModel mTopicViewModel;
     private DrawerLayout mDrayerLayout;
-    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Setting up user, toolbar, drawer, and drawer header
+        mDrayerLayout = findViewById(R.id.drawer_layout);
         configureToolBar();
         configureNavigationDrawer();
-        mDrayerLayout = findViewById(R.id.drawer_layout);
+
+        // Setting up view models
         mTopicViewModel = new ViewModelProvider(this).get(TopicViewModel.class);
+
+        // Setting up top card views and functions
         mProgressBar = findViewById(R.id.circular_progress_bar);
         mProgressText = findViewById(R.id.progress_percent);
         mTodoCount = findViewById(R.id.total_todo);
@@ -80,22 +86,25 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
         // Specify the layout to use when the list of choices appear.
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if(spinner != null) spinner.setAdapter(adapter);
+
+        /// Seting up recycler view for dashboard and functions
         mRecyclerView = findViewById(R.id.dashboard_recycler);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mAdapter = new TopicGridAdapter(this);
         mTopicViewModel.getTopics().observe(this, topics -> mAdapter.setTopics(topics));
         mRecyclerView.setAdapter(mAdapter);
-
         // Sets up adapter to listen to clicks
         mAdapter.setClickListener(new TopicGridAdapter.ClickListener() {
             @Override
             public void onClicked(int pos, Context context) {
                 Topic topic = mAdapter.getTopicAtPosition(pos);
-                mTopicViewModel.deleteTopic(topic);
+                Intent intent = new Intent(DashboardActivity.this, TaskActivity.class);
+                intent.putExtra("EXTRA_TOPIC_NAME", topic.getTopicName());
+                startActivity(intent);
             }
         });
 
-        // Sets up bottom navigation
+        // Setting up bottom navigation
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -148,11 +157,13 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
 
     private void configureToolBar() {
         Toolbar navToolbar = findViewById(R.id.nav_toolbar);
+        navToolbar.setTitle("Dashboard");
         setSupportActionBar(navToolbar);
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(true);
     }
 
     private void configureNavigationDrawer() {

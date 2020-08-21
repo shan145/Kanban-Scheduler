@@ -33,7 +33,6 @@ public class TaskFillActivity extends AppCompatActivity {
     private View mTimeLine;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private TimePickerDialog.OnTimeSetListener mTimeSetListener;
-    private String editEmail;
     private int editId;
 
     @Override
@@ -55,9 +54,7 @@ public class TaskFillActivity extends AppCompatActivity {
             mTaskName.setText(b.getString("EXTRA_EDIT_NAME"));
             mTaskDescription.setText(b.getString("EXTRA_EDIT_DESCRIPTION"));
             mDate.setText(b.getString("EXTRA_EDIT_DATE"));
-            // mDate.setText(parseDateToString((Date)b.getSerializable("EXTRA_EDIT_DATE")));
             mTime.setText(b.getString("EXTRA_EDIT_TIME"));
-            editEmail = b.getString("EXTRA_EDIT_EMAIL");
             editId = b.getInt("EXTRA_EDIT_ID");
             // If date isn't empty, then show it reminder tags.
             if(!mDate.getText().toString().equals("")) {
@@ -118,59 +115,30 @@ public class TaskFillActivity extends AppCompatActivity {
                     Toast.makeText(this, "Please select a time and date.", Toast.LENGTH_SHORT).show();
                 // If passes all conditions, successfully submit
                 } else {
-                    // For editing
-                    if (editEmail != null ) {
-                        Intent intent = new Intent();
-                        Bundle extras = new Bundle();
-                        extras.putString("EXTRA_RETURN_NAME", mTaskName.getText().toString());
-                        extras.putString("EXTRA_RETURN_DESCRIPTION", mTaskDescription.getText().toString());
-                        extras.putSerializable("EXTRA_RETURN_DATE", parseDateString(mDate.getText().toString()));
-                        extras.putString("EXTRA_RETURN_TIME", mTime.getText().toString());
-                        extras.putString("EXTRA_RETURN_EMAIL", editEmail);
-                        extras.putInt("EXTRA_RETURN_ID", editId);
-                        intent.putExtras(extras);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    // For a new filled out form
-                    } else {
-                        Intent intent = new Intent();
-                        Bundle extras = new Bundle();
-                        extras.putString("EXTRA_TASK_NAME", mTaskName.getText().toString());
-                        extras.putString("EXTRA_TASK_DESCRIPTION", mTaskDescription.getText().toString());
-                        extras.putSerializable("EXTRA_DATE", parseDateString(mDate.getText().toString()));
-                        extras.putString("EXTRA_TIME", mTime.getText().toString());
-                        intent.putExtras(extras);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
-                }
-            // If discard button is invisible, then simply submit
-            } else {
-                // For editing
-                if (editEmail != null ) {
-                    Intent intent = new Intent();
-                    Bundle extras = new Bundle();
-                    extras.putString("EXTRA_RETURN_NAME", mTaskName.getText().toString());
-                    extras.putString("EXTRA_RETURN_DESCRIPTION", mTaskDescription.getText().toString());
-                    extras.putSerializable("EXTRA_RETURN_DATE", parseDateString(mDate.getText().toString()));
-                    extras.putString("EXTRA_RETURN_TIME", mTime.getText().toString());
-                    extras.putString("EXTRA_RETURN_EMAIL", editEmail);
-                    extras.putInt("EXTRA_RETURN_ID", editId);
-                    intent.putExtras(extras);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                    // For a new filled out form
-                } else {
                     Intent intent = new Intent();
                     Bundle extras = new Bundle();
                     extras.putString("EXTRA_TASK_NAME", mTaskName.getText().toString());
                     extras.putString("EXTRA_TASK_DESCRIPTION", mTaskDescription.getText().toString());
                     extras.putSerializable("EXTRA_DATE", parseDateString(mDate.getText().toString()));
                     extras.putString("EXTRA_TIME", mTime.getText().toString());
+                    extras.putInt("EXTRA_TASK_ID", editId);
                     intent.putExtras(extras);
                     setResult(RESULT_OK, intent);
                     finish();
                 }
+            // If discard button is invisible, then simply submit
+            } else {
+                Intent intent = new Intent();
+                Bundle extras = new Bundle();
+                extras.putString("EXTRA_TASK_NAME", mTaskName.getText().toString());
+                extras.putString("EXTRA_TASK_DESCRIPTION", mTaskDescription.getText().toString());
+                extras.putSerializable("EXTRA_DATE", parseDateString(mDate.getText().toString()));
+                extras.putString("EXTRA_TIME", mTime.getText().toString());
+                extras.putInt("EXTRA_TASK_ID", editId);
+                intent.putExtras(extras);
+                setResult(RESULT_OK, intent);
+                finish();
+
             }
         }
     }

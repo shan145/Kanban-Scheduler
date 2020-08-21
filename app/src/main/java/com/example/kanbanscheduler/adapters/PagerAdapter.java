@@ -6,10 +6,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.kanbanscheduler.fragments.ProgFragment;
-import com.example.kanbanscheduler.fragments.TodoFragment;
-import com.example.kanbanscheduler.fragments.DoneFragment;
-
 public class PagerAdapter extends FragmentStateAdapter {
     int mNumOfTabs;
 
@@ -21,12 +17,7 @@ public class PagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        switch(position) {
-            case 0: return new TodoFragment();
-            case 1: return new ProgFragment();
-            case 2: return new DoneFragment();
-            default: return null;
-        }
+        return null;
     }
 
     @Override

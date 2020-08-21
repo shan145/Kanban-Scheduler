@@ -21,8 +21,8 @@ public class KanbanRepository {
      * Methods below are derived from TaskDao
      */
     // Observed LiveData will notify observer when data has changed
-    public LiveData<List<Task>> getTasks(String taskType, String email) {
-        return mTaskDao.getTasks(taskType, email);
+    public LiveData<List<Task>> getTasks(String topicName) {
+        return mTaskDao.getTasks(topicName);
     }
     public void insertTask(Task task) {
         KanbanRoomDatabase.databaseWriteExecutor.execute(() -> {
@@ -34,15 +34,18 @@ public class KanbanRepository {
             mTaskDao.delete(task);
         });
     }
-    public void updateTaskType(String taskType, String email, int taskId) {
+    public void updateTaskType(int taskType, int taskId) {
         KanbanRoomDatabase.databaseWriteExecutor.execute(() -> {
-            mTaskDao.updateTaskType(taskType, email, taskId);
+            mTaskDao.updateTaskType(taskType, taskId);
         });
     }
-    public void updateTask(String taskName, String description, Date date, String time, String emailAddress, int tid) {
+    public void updateTask(String taskName, String description, Date date, String time, int tid) {
         KanbanRoomDatabase.databaseWriteExecutor.execute(() -> {
-            mTaskDao.updateTask(taskName, description, date, time, emailAddress, tid);
+            mTaskDao.updateTask(taskName, description, date, time, tid);
         });
+    }
+    public List<Task> getDateRangeTasks(String topicName, Date startDate, Date endDate) {
+        return mTaskDao.getDateRangeTasks(topicName, startDate, endDate);
     }
 
     /*
