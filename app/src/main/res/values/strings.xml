@@ -36,6 +36,7 @@
     <string name="home">Home</string>
     <string name="add_topic">Add Topic</string>
     <string name="today_s_tasks">Today\'s Tasks</string>
+    <string name="welcome_to_your_scheduler">Welcome to your Scheduler!</string>
     <string-array name="dates_array">
         <item>Today</item>
         <item>Weekly</item>

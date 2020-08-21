@@ -3,6 +3,8 @@ package com.example.kanbanscheduler.room_db;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
@@ -10,14 +12,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-@Entity(tableName="task_table")
+@Entity(tableName="task_table", foreignKeys = @ForeignKey(entity=Topic.class, parentColumns = "topic_name", childColumns = "topic_name", onDelete = ForeignKey.CASCADE), indices = {@Index("topic_name")})
 public class Task {
     @PrimaryKey(autoGenerate = true)
     private int tid;
 
     @NonNull
-    @ColumnInfo(name="email_address")
-    private String email;
+    @ColumnInfo(name="topic_name")
+    private String topic;
 
     @NonNull
     @ColumnInfo(name="task_name")
@@ -36,10 +38,10 @@ public class Task {
 
     @NonNull
     @ColumnInfo(name="task_type")
-    private String taskType;
+    private int taskType;
 
-    public Task(@NonNull String email, @NonNull String name, String description, Date date, String time, @NonNull String taskType) {
-        this.email=email;
+    public Task(@NonNull String topic, @NonNull String name, String description, Date date, String time, @NonNull int taskType) {
+        this.topic=topic;
         this.name=name;
         this.description=description;
         this.date=date;
@@ -51,7 +53,7 @@ public class Task {
     public void setTid(int tid) {this.tid=tid;}
 
     @NonNull
-    public String getEmail() { return this.email; }
+    public String getTopic() { return this.topic; }
 
     @NonNull
     public String getName() {
@@ -79,5 +81,5 @@ public class Task {
     }
 
     @NonNull
-    public String getTaskType() { return this.taskType; }
+    public int getTaskType() { return this.taskType; }
 }

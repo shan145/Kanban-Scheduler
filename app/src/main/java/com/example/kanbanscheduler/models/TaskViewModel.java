@@ -20,13 +20,15 @@ public class TaskViewModel extends AndroidViewModel {
         mRepository = new KanbanRepository(application);
     }
 
-    public LiveData<List<Task>> getTasks(String taskType, String email) { return mRepository.getTasks(taskType, email);}
+    public LiveData<List<Task>> getTasks(String topicName) { return mRepository.getTasks(topicName);}
 
     public void insertTask(Task task) { mRepository.insertTask(task);}
 
     public void deleteTask(Task task) { mRepository.deleteTask(task);}
 
-    public void updateTaskType(String taskType, String email, int taskId) { mRepository.updateTaskType(taskType, email, taskId);}
+    public void updateTaskType(int taskType, int taskId) { mRepository.updateTaskType(taskType, taskId);}
 
-    public void updateTask(String taskName, String description, Date date, String time, String emailAddress, int tid) { mRepository.updateTask(taskName, description, date, time, emailAddress, tid); }
+    public void updateTask(String taskName, String description, Date date, String time, int tid) { mRepository.updateTask(taskName, description, date, time, tid); }
+
+    public List<Task> getDateRangeTasks(String topicName, Date startDate, Date endDate) { return mRepository.getDateRangeTasks(topicName, startDate, endDate); }
 }

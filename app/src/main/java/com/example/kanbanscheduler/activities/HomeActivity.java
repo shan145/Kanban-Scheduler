@@ -75,10 +75,4 @@ public class HomeActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    public Bundle userEmailData() {
-        Bundle emailBundle = new Bundle();
-        emailBundle.putString("EMAIL", user.getEmail());
-        return emailBundle;
-    }
 }
