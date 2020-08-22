@@ -1,12 +1,16 @@
 package com.example.kanbanscheduler.activities;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,8 +19,10 @@ import com.example.kanbanscheduler.adapters.TaskListAdapter;
 import com.example.kanbanscheduler.models.TaskViewModel;
 import com.example.kanbanscheduler.room_db.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class TaskActivity extends AppCompatActivity {
     public static final int NEW_TASK_ACTIVITY_REQUEST_CODE = 1;
@@ -29,6 +35,8 @@ public class TaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
+        // Get topic name from intent
+        topicName = getIntent().getStringExtra("EXTRA_TOPIC_NAME");
         mViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
         RecyclerView mRecyclerView = findViewById(R.id.recyclerview);
         mAdapter = new TaskListAdapter(this);
@@ -64,18 +72,14 @@ public class TaskActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(TaskActivity.this, TaskFillActivity.class);
-                startActivityForResult(intent, NEW_TASK_ACTIVITY_REQUEST_CODE);
-            }
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(TaskActivity.this, TaskFillActivity.class);
+            startActivityForResult(intent, NEW_TASK_ACTIVITY_REQUEST_CODE);
         });
-
-        // Get topic name from intent
-        topicName = getIntent().getStringExtra("EXTRA_TOPIC_NAME");
         // Updates cached copy of tasks in adapter if change to live data is observed
         mViewModel.getTasks(topicName).observe(this, tasks-> mAdapter.setTasks(tasks));
+        configureToolBar();
+        // configureTabLayout();
     }
 
     @Override
@@ -99,4 +103,34 @@ public class TaskActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void configureToolBar() {
+        Toolbar toolbar = findViewById(R.id.topic_toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setTitle(topicName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void configureTabLayout() {
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("Today"));
+        tabLayout.addTab(tabLayout.newTab().setText("Tomorrow"));
+        tabLayout.addTab(tabLayout.newTab().setText("Upcoming"));
+        // Set tabs to fill entire layout
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                Toast.makeText(TaskActivity.this, Objects.requireNonNull(tab.getText()).toString(), Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
+    }
+
 }
