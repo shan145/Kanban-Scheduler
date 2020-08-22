@@ -70,64 +70,64 @@
                         android:text="75% \nDone"/>
                     <TextView
                         android:id="@+id/total_todo"
-                        android:layout_width="wrap_content"
+                        android:layout_width="75dp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/progress_percent"
                         android:layout_alignParentStart="true"
                         android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
                         android:layout_marginStart="30dp"
                         android:fontFamily="@font/montserrat"
                         android:textColor="#FFFFFF"
                         android:gravity="center_horizontal"
                         android:textSize="16sp"
-                        android:text="To Dos\n5"/>
+                        android:text="Todos\n5"/>
                     <View
                         android:id="@+id/task_divider_1"
                         android:layout_width="1dp"
                         android:layout_height="50dp"
                         android:layout_marginTop="15dp"
-                        android:layout_marginStart="30dp"
+                        android:layout_marginStart="120dp"
                         android:layout_below="@id/progress_percent"
-                        android:layout_toEndOf="@id/total_todo"
                         android:background="#FFFFFF" />
                     <TextView
-                        android:id="@+id/total_progress"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/total_done"
+                        android:layout_width="75dp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/progress_percent"
                         android:layout_toEndOf="@id/task_divider_1"
+                        android:layout_toStartOf="@id/task_divider_2"
                         android:layout_marginTop="15dp"
                         android:layout_marginBottom="15dp"
                         android:layout_marginStart="30dp"
+                        android:layout_marginEnd="30dp"
                         android:fontFamily="@font/montserrat"
                         android:textColor="#FFFFFF"
                         android:gravity="center_horizontal|center_vertical"
                         android:textSize="16sp"
-                        android:text="In Progress\n4"/>
+                        android:text="Done\n4"/>
                     <View
                         android:id="@+id/task_divider_2"
                         android:layout_width="1dp"
                         android:layout_height="50dp"
                         android:layout_marginTop="15dp"
-                        android:layout_marginStart="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="120dp"
                         android:layout_below="@id/progress_percent"
-                        android:layout_toEndOf="@id/total_progress"
                         android:background="#FFFFFF" />
                     <TextView
-                        android:id="@+id/total_done"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/total_tasks"
+                        android:layout_alignParentEnd="true"
+                        android:layout_width="75dp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/progress_percent"
-                        android:layout_toEndOf="@id/task_divider_2"
                         android:layout_marginTop="15dp"
                         android:layout_marginBottom="15dp"
-                        android:layout_marginStart="30dp"
+                        android:layout_marginEnd="30dp"
                         android:fontFamily="@font/montserrat"
                         android:textColor="#FFFFFF"
                         android:gravity="center_horizontal|center_vertical"
                         android:textSize="16sp"
-                        android:text="Done\n3"/>
+                        android:text="Total\n3"/>
                 </RelativeLayout>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/dashboard_recycler"

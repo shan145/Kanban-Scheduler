@@ -47,18 +47,22 @@ import com.google.firebase.auth.FirebaseUser;
 
 import org.w3c.dom.Text;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class DashboardActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
     private TextView mProgressText;
     private ProgressBar mProgressBar;
     private TextView mTodoCount;
-    private TextView mProgressCount;
+    private TextView mTotalCount;
     private TextView mDoneCount;
     private Spinner spinner;
     private RecyclerView mRecyclerView;
     private TopicGridAdapter mAdapter;
     private TopicViewModel mTopicViewModel;
+    private TaskViewModel mTaskViewModel;
     private DrawerLayout mDrayerLayout;
 
     @Override
@@ -73,12 +77,13 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
 
         // Setting up view models
         mTopicViewModel = new ViewModelProvider(this).get(TopicViewModel.class);
+        mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
 
         // Setting up top card views and functions
         mProgressBar = findViewById(R.id.circular_progress_bar);
         mProgressText = findViewById(R.id.progress_percent);
         mTodoCount = findViewById(R.id.total_todo);
-        mProgressCount = findViewById(R.id.total_progress);
+        mTotalCount = findViewById(R.id.total_tasks);
         mDoneCount = findViewById(R.id.total_done);
         spinner = findViewById(R.id.date_spinner);
         if(spinner != null) spinner.setOnItemSelectedListener(this);
@@ -94,14 +99,23 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
         mTopicViewModel.getTopics().observe(this, topics -> mAdapter.setTopics(topics));
         mRecyclerView.setAdapter(mAdapter);
         // Sets up adapter to listen to clicks
-        mAdapter.setClickListener(new TopicGridAdapter.ClickListener() {
-            @Override
-            public void onClicked(int pos, Context context) {
+        mAdapter.setClickListener((pos, context) -> {
+            Topic topic = mAdapter.getTopicAtPosition(pos);
+            Intent intent = new Intent(DashboardActivity.this, TaskActivity.class);
+            intent.putExtra("EXTRA_TOPIC_NAME", topic.getTopicName());
+            startActivity(intent);
+        });
+        mAdapter.setLongClickListener(pos -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+            builder.setCancelable(true);
+            builder.setTitle("Delete the topic?");
+            builder.setMessage("Would you like to delete this topic?");
+            builder.setPositiveButton("Delete", (dialogInterface, i) -> {
                 Topic topic = mAdapter.getTopicAtPosition(pos);
-                Intent intent = new Intent(DashboardActivity.this, TaskActivity.class);
-                intent.putExtra("EXTRA_TOPIC_NAME", topic.getTopicName());
-                startActivity(intent);
-            }
+                mTopicViewModel.deleteTopic(topic);
+            }).setNegativeButton("Cancel", null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
         });
 
         // Setting up bottom navigation
@@ -150,7 +164,24 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {}
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        String spinnerLabel = adapterView.getItemAtPosition(i).toString();
+        int totalTodos=0;
+        int totalDones=0;
+        int totalTasks=0;
+        Date today = new Date();
+        if(spinnerLabel.equals("Weekly")) {
+            totalTasks = totalTodos+totalDones;
+        } else {
+            Toast.makeText(this, "Will do rest later", Toast.LENGTH_SHORT).show();
+        }
+        String todoString="Todos\n"+ totalTodos;
+        mTodoCount.setText(todoString);
+        String doneString = "Done\n"+ totalDones;
+        mDoneCount.setText(doneString);
+        String totalString = "Total\n"+totalTasks;
+        mTotalCount.setText(totalString);
+    }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {}

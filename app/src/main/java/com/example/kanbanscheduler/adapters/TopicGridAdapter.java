@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.kanbanscheduler.R;
 import com.example.kanbanscheduler.room_db.Topic;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class TopicGridAdapter extends RecyclerView.Adapter<TopicGridAdapter.Topi
     private List<Topic> mTopicList;
     private LayoutInflater mInflator;
     private ClickListener mClickListener;
+    private LongClickListener mLongClickListener;
     private int[] colorArray;
 
     public TopicGridAdapter(Context context) {
@@ -61,7 +63,7 @@ public class TopicGridAdapter extends RecyclerView.Adapter<TopicGridAdapter.Topi
     }
 
     /*
-     * Interface to allow calling of edit button in Fragments
+     * Interface to allow calling of click on cards
      */
     public interface ClickListener {
         void onClicked(int pos, Context context);
@@ -70,22 +72,42 @@ public class TopicGridAdapter extends RecyclerView.Adapter<TopicGridAdapter.Topi
         mClickListener = listener;
     }
 
-    class TopicViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    /*
+     * Interface to allow calling of long click on cards
+     */
+    public interface LongClickListener {
+        void onLongClicked(int pos);
+    }
+    public void setLongClickListener(TopicGridAdapter.LongClickListener listener) {
+        mLongClickListener = listener;
+    }
+
+    class TopicViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
         private TextView mTopicName;
+        private MaterialCardView mCardView;
         public TopicViewHolder(View itemView, TopicGridAdapter adapter) {
             super(itemView);
+            mCardView = itemView.findViewById(R.id.topic_view);
             mTopicName = itemView.findViewById(R.id.topic);
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         void bindTo(Topic currentTopic, int position) {
             mTopicName.setText(currentTopic.getTopicName());
-            mTopicName.setBackgroundColor(colorArray[position%colorArray.length]);
+            mCardView.setCardBackgroundColor(colorArray[position%colorArray.length]);
+            // mTopicName.setBackgroundColor(colorArray[position%colorArray.length]);
         }
 
         @Override
         public void onClick(View view) {
             mClickListener.onClicked(getAdapterPosition(), view.getContext());
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            mLongClickListener.onLongClicked(getAdapterPosition());
+            return true;
         }
     }
 }

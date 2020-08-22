@@ -26,6 +26,14 @@ public interface TaskDao {
     @Query("UPDATE task_table SET task_name = :taskName, task_description= :description, date = :date, time = :time WHERE tid = :tid")
     void updateTask(String taskName, String description, Date date, String time, int tid);
 
-    @Query("SELECT * FROM task_table WHERE topic_name=:topicName AND date >= :startDate AND date <=:endDate")
+    @Query("SELECT * FROM task_table WHERE topic_name=:topicName AND (date BETWEEN :startDate AND :endDate)")
     List<Task> getDateRangeTasks(String topicName, Date startDate, Date endDate);
+
+    @Query("SELECT COUNT(tid) FROM task_table WHERE task_type=0 AND (date BETWEEN :startDate AND :endDate)")
+    int getTotalTodos(Date startDate, Date endDate);
+
+    @Query("SELECT COUNT(tid) FROM task_table WHERE task_type=1 AND (date BETWEEN :startDate AND :endDate)")
+    int getTotalDones(Date startDate, Date endDate);
+
+
 }
