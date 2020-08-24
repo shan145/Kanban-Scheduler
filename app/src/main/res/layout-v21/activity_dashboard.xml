@@ -37,18 +37,28 @@
                     android:layout_alignParentTop="true"
                     android:background="@drawable/dashboard_background"
                     android:layout_margin="10dp">
-                    <Spinner
-                        android:id="@+id/date_spinner"
+                    <TextView
+                        android:id="@+id/date_shower"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:backgroundTint="#FFFFFF"/>
+                        android:textColor="#FFFFFF"
+                        android:text="@string/today"
+                        android:fontFamily="@font/montserrat"
+                        android:textSize="16sp"/>
+<!--                    <Spinner-->
+<!--                        android:id="@+id/date_spinner"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_alignParentTop="true"-->
+<!--                        android:layout_centerHorizontal="true"-->
+<!--                        android:backgroundTint="#FFFFFF"/>-->
                     <ProgressBar
                         android:id="@+id/circular_progress_bar"
                         android:layout_width="200dp"
                         android:layout_height="200dp"
-                        android:layout_below="@id/date_spinner"
+                        android:layout_below="@id/date_shower"
                         android:layout_centerHorizontal="true"
                         android:progressDrawable="@drawable/circular_progress_bar"
                         android:background="@drawable/circle_shape"
