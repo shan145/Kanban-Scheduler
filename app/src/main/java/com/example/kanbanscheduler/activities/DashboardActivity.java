@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -51,19 +52,22 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
-public class DashboardActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+public class DashboardActivity extends AppCompatActivity { // implements AdapterView.OnItemSelectedListener{
     private TextView mProgressText;
     private ProgressBar mProgressBar;
     private TextView mTodoCount;
     private TextView mTotalCount;
     private TextView mDoneCount;
-    private Spinner spinner;
+//    private Spinner spinner;
     private RecyclerView mRecyclerView;
     private TopicGridAdapter mAdapter;
     private TopicViewModel mTopicViewModel;
     private TaskViewModel mTaskViewModel;
     private DrawerLayout mDrayerLayout;
+    private int totalTodos;
+    private int totalDones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,14 +89,29 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
         mTodoCount = findViewById(R.id.total_todo);
         mTotalCount = findViewById(R.id.total_tasks);
         mDoneCount = findViewById(R.id.total_done);
-        spinner = findViewById(R.id.date_spinner);
-        if(spinner != null) spinner.setOnItemSelectedListener(this);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.dates_array, R.layout.date_spinner);
-        // Specify the layout to use when the list of choices appear.
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        if(spinner != null) spinner.setAdapter(adapter);
 
-        /// Seting up recycler view for dashboard and functions
+        mTaskViewModel.getTotalTodos(getStartDate(), getEndDate()).observe(this, integer -> {
+            if(integer != null) totalTodos=integer;
+            else totalTodos=0;
+            String todoString="Todos\n"+ totalTodos;
+            mTodoCount.setText(todoString);
+        });
+        mTaskViewModel.getTotalDones(getStartDate(), getEndDate()).observe(this, integer -> {
+            if(integer!= null) totalDones=integer;
+            else totalDones=0;
+            String doneString="Dones\n"+totalDones;
+            mDoneCount.setText(doneString);
+        });
+        configureTotalTasks();
+
+//        spinner = findViewById(R.id.date_spinner);
+//        if(spinner != null) spinner.setOnItemSelectedListener(this);
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.dates_array, R.layout.date_spinner);
+//        // Specify the layout to use when the list of choices appear.
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        if(spinner != null) spinner.setAdapter(adapter);
+
+        // Setting up recycler view for dashboard and functions
         mRecyclerView = findViewById(R.id.dashboard_recycler);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mAdapter = new TopicGridAdapter(this);
@@ -120,72 +139,85 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
 
         // Setting up bottom navigation
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
-        navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch(item.getItemId()) {
-                    case R.id.add_topic:
-                        LinearLayout container = new LinearLayout(DashboardActivity.this);
-                        container.setOrientation(LinearLayout.VERTICAL);
-                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        lp.setMargins(40, 15, 40, 15);
-                        EditText topicText = new EditText(DashboardActivity.this);
-                        topicText.setLayoutParams(lp);
-                        topicText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(20)});
-                        container.addView(topicText);
-                        // Create dialog builder
-                        AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
-                        builder.setTitle("Enter a Topic Name:");
-                        builder.setView(container)
-                                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        String topicName = topicText.getText().toString().trim();
-                                        if(mAdapter.inTopicList(topicName)) {
-                                            Toast.makeText(DashboardActivity.this, "Unable to get add topic. The topic name may already exist.", Toast.LENGTH_LONG).show();
-                                        } else {
-                                            mTopicViewModel.insertTopic(new Topic(topicName));
-                                        }
+        navigationView.setOnNavigationItemSelectedListener(item -> {
+            switch(item.getItemId()) {
+                case R.id.add_topic:
+                    LinearLayout container = new LinearLayout(DashboardActivity.this);
+                    container.setOrientation(LinearLayout.VERTICAL);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    lp.setMargins(40, 15, 40, 15);
+                    EditText topicText = new EditText(DashboardActivity.this);
+                    topicText.setLayoutParams(lp);
+                    topicText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(20)});
+                    container.addView(topicText);
+                    // Create dialog builder
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+                    builder.setTitle("Enter a Topic Name:");
+                    builder.setView(container)
+                            .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    String topicName = topicText.getText().toString().trim();
+                                    if(mAdapter.inTopicList(topicName)) {
+                                        Toast.makeText(DashboardActivity.this, "Unable to get add topic. The topic name may already exist.", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        mTopicViewModel.insertTopic(new Topic(topicName));
                                     }
-                                }).setNegativeButton("Cancel", null);
-                        AlertDialog build = builder.create();
-                        build.show();
-                        break;
-                    case R.id.topic_home:
-                        Toast.makeText(DashboardActivity.this, "You have reached the Home Button", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.task_today:
-                        Toast.makeText(DashboardActivity.this, "You have reached today's tasks", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-                return true;
+                                }
+                            }).setNegativeButton("Cancel", null);
+                    AlertDialog build = builder.create();
+                    build.show();
+                    break;
+                case R.id.topic_home:
+                    Toast.makeText(DashboardActivity.this, "You have reached the Home Button", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.task_today:
+                    Toast.makeText(DashboardActivity.this, "You have reached today's tasks", Toast.LENGTH_SHORT).show();
+                    break;
             }
+            return true;
         });
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        String spinnerLabel = adapterView.getItemAtPosition(i).toString();
-        int totalTodos=0;
-        int totalDones=0;
-        int totalTasks=0;
-        Date today = new Date();
-        if(spinnerLabel.equals("Weekly")) {
-            totalTasks = totalTodos+totalDones;
-        } else {
-            Toast.makeText(this, "Will do rest later", Toast.LENGTH_SHORT).show();
-        }
-        String todoString="Todos\n"+ totalTodos;
-        mTodoCount.setText(todoString);
-        String doneString = "Done\n"+ totalDones;
-        mDoneCount.setText(doneString);
-        String totalString = "Total\n"+totalTasks;
+//    @Override
+//    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//        String spinnerLabel = adapterView.getItemAtPosition(i).toString();
+//        int totalTodos=0;
+//        int totalDones=0;
+//        int totalTasks=0;
+//        Date today = new Date();
+//        if(spinnerLabel.equals("Weekly")) {
+//            totalTasks = totalTodos+totalDones;
+//        } else {
+//            Toast.makeText(this, "Will do rest later", Toast.LENGTH_SHORT).show();
+//        }
+//        String todoString="Todos\n"+ totalTodos;
+//        mTodoCount.setText(todoString);
+//        String doneString = "Done\n"+ totalDones;
+//        mDoneCount.setText(doneString);
+//        String totalString = "Total\n"+totalTasks;
+//        mTotalCount.setText(totalString);
+//    }
+//
+//    @Override
+//    public void onNothingSelected(AdapterView<?> adapterView) {}
+
+    private void configureTotalTasks() {
+        int totalTasks = totalDones+totalTodos;
+        String totalString="Total\n"+totalTasks;
         mTotalCount.setText(totalString);
+        int totalProgress = 100;
+        if(totalTasks != 0) {
+            double base = (double)totalDones/totalTasks;
+            double rounded=Math.round(base*100.0)/100.0;
+            totalProgress = (int) rounded*100;
+
+        }
+        mProgressBar.setProgress(totalProgress);
+        String progressText=totalProgress+"%\nDone";
+        mProgressText.setText(progressText);
+
     }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {}
-
     private void configureToolBar() {
         Toolbar navToolbar = findViewById(R.id.nav_toolbar);
         navToolbar.setTitle("Dashboard");
@@ -232,5 +264,23 @@ public class DashboardActivity extends AppCompatActivity implements AdapterView.
                 break;
         }
         return true;
+    }
+
+    private Date getStartDate() {
+        Calendar calDate = new GregorianCalendar();
+        calDate.set(Calendar.HOUR_OF_DAY, 0);
+        calDate.set(Calendar.MINUTE, 0);
+        calDate.set(Calendar.SECOND, 0);
+        calDate.set(Calendar.MILLISECOND, 0);
+        return calDate.getTime();
+    }
+
+    private Date getEndDate() {
+        Calendar calDate = new GregorianCalendar();
+        calDate.set(Calendar.HOUR_OF_DAY, 23);
+        calDate.set(Calendar.MINUTE, 59);
+        calDate.set(Calendar.SECOND, 59);
+        calDate.set(Calendar.MILLISECOND, 999);
+        return calDate.getTime();
     }
 }
