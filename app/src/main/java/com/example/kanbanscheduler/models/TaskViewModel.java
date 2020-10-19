@@ -31,6 +31,6 @@ public class TaskViewModel extends AndroidViewModel {
     public void updateTask(String taskName, String description, Date date, String time, int tid) { mRepository.updateTask(taskName, description, date, time, tid); }
 
     public List<Task> getDateRangeTasks(String topicName, Date startDate, Date endDate) { return mRepository.getDateRangeTasks(topicName, startDate, endDate); }
-    public LiveData<Integer> getTotalTodos(Date startDate, Date endDate){ return mRepository.getTotalTodos(startDate, endDate); }
-    public LiveData<Integer> getTotalDones(Date startDate, Date endDate) { return mRepository.getTotalDones(startDate, endDate); }
+    public int getTotalTodos(Date startDate, Date endDate){ return mRepository.getTotalTodos(startDate, endDate); }
+    public int getTotalDones(Date startDate, Date endDate) { return mRepository.getTotalDones(startDate, endDate); }
 }

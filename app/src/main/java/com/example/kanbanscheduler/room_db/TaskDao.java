@@ -30,10 +30,10 @@ public interface TaskDao {
     List<Task> getDateRangeTasks(String topicName, Date startDate, Date endDate);
 
     @Query("SELECT COUNT(tid) FROM task_table WHERE task_type=0 AND (date BETWEEN :startDate AND :endDate)")
-    LiveData<Integer> getTotalTodos(Date startDate, Date endDate);
+    int getTotalTodos(Date startDate, Date endDate);
 
     @Query("SELECT COUNT(tid) FROM task_table WHERE task_type=1 AND (date BETWEEN :startDate AND :endDate)")
-    LiveData<Integer> getTotalDones(Date startDate, Date endDate);
+    int getTotalDones(Date startDate, Date endDate);
 
 
 }
