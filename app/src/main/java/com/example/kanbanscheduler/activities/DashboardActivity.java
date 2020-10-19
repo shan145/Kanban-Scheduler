@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -17,9 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Observable;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.InputFilter;
 import android.text.Layout;
 import android.util.Log;
@@ -46,13 +50,10 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import org.w3c.dom.Text;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DashboardActivity extends AppCompatActivity { // implements AdapterView.OnItemSelectedListener{
     private TextView mProgressText;
@@ -66,8 +67,6 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
     private TopicViewModel mTopicViewModel;
     private TaskViewModel mTaskViewModel;
     private DrawerLayout mDrayerLayout;
-    private int totalTodos;
-    private int totalDones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,20 +88,24 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         mTodoCount = findViewById(R.id.total_todo);
         mTotalCount = findViewById(R.id.total_tasks);
         mDoneCount = findViewById(R.id.total_done);
-
-        mTaskViewModel.getTotalTodos(getStartDate(), getEndDate()).observe(this, integer -> {
-            if(integer != null) totalTodos=integer;
-            else totalTodos=0;
-            String todoString="Todos\n"+ totalTodos;
-            mTodoCount.setText(todoString);
-        });
-        mTaskViewModel.getTotalDones(getStartDate(), getEndDate()).observe(this, integer -> {
-            if(integer!= null) totalDones=integer;
-            else totalDones=0;
-            String doneString="Dones\n"+totalDones;
-            mDoneCount.setText(doneString);
-        });
-        configureTotalTasks();
+        try {
+            configureTasks();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//        mTaskViewModel.getTotalTodos(getStartDate(), getEndDate()).observe(this, integer -> {
+//            if(integer != null) totalTodos=integer;
+//            else totalTodos=0;
+//            String todoString="Todos\n"+ totalTodos;
+//            mTodoCount.setText(todoString);
+//        });
+//        mTaskViewModel.getTotalDones(getStartDate(), getEndDate()).observe(this, integer -> {
+//            if(integer!= null) totalDones=integer;
+//            else totalDones=0;
+//            String doneString="Dones\n"+totalDones;
+//            mDoneCount.setText(doneString);
+//            configureTotalTasks();
+//        });
 
 //        spinner = findViewById(R.id.date_spinner);
 //        if(spinner != null) spinner.setOnItemSelectedListener(this);
@@ -202,22 +205,60 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
 //    @Override
 //    public void onNothingSelected(AdapterView<?> adapterView) {}
 
-    private void configureTotalTasks() {
-        int totalTasks = totalDones+totalTodos;
+    private void configureTasks() throws InterruptedException {
+        AtomicInteger totalTodosCount = new AtomicInteger();
+        Thread todoThread = new Thread(() -> {
+            int totalTodos = mTaskViewModel.getTotalTodos(getStartDate(), getEndDate());
+            totalTodosCount.set(totalTodos);
+        });
+        todoThread.setPriority(10);
+        todoThread.start();
+        todoThread.join();
+
+        String todoString="Todos\n"+ totalTodosCount.get();
+        mTodoCount.setText(todoString);
+
+        AtomicInteger totalDonesCount = new AtomicInteger();
+        Thread doneThread = new Thread(() -> {
+            int totalDones = mTaskViewModel.getTotalDones(getStartDate(), getEndDate());
+            totalDonesCount.set(totalDones);
+        });
+        doneThread.setPriority(5);
+        doneThread.start();
+        doneThread.join();
+
+        String doneString="Dones\n"+totalDonesCount.get();
+        mDoneCount.setText(doneString);
+
+        int totalTasks = totalTodosCount.get()+totalDonesCount.get();
         String totalString="Total\n"+totalTasks;
         mTotalCount.setText(totalString);
         int totalProgress = 100;
         if(totalTasks != 0) {
-            double base = (double)totalDones/totalTasks;
+            double base = (double)totalDonesCount.get()/totalTasks;
             double rounded=Math.round(base*100.0)/100.0;
-            totalProgress = (int) rounded*100;
-
+            totalProgress = (int) Math.round(rounded*100);
         }
         mProgressBar.setProgress(totalProgress);
         String progressText=totalProgress+"%\nDone";
         mProgressText.setText(progressText);
-
     }
+//    private void configureTotalTasks() {
+//        int totalTasks = totalDones+totalTodos;
+//        String totalString="Total\n"+totalTasks;
+//        mTotalCount.setText(totalString);
+//        int totalProgress = 100;
+//        if(totalTasks != 0) {
+//            double base = (double)totalDones/totalTasks;
+//            double rounded=Math.round(base*100.0)/100.0;
+//            totalProgress = (int) Math.round(rounded*100);
+//
+//        }
+//        mProgressBar.setProgress(totalProgress);
+//        String progressText=totalProgress+"%\nDone";
+//        mProgressText.setText(progressText);
+//
+//    }
     private void configureToolBar() {
         Toolbar navToolbar = findViewById(R.id.nav_toolbar);
         navToolbar.setTitle("Dashboard");

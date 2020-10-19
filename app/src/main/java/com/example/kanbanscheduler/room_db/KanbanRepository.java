@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class KanbanRepository {
     private TaskDao mTaskDao;
@@ -47,10 +49,10 @@ public class KanbanRepository {
     public List<Task> getDateRangeTasks(String topicName, Date startDate, Date endDate) {
         return mTaskDao.getDateRangeTasks(topicName, startDate, endDate);
     }
-    public LiveData<Integer> getTotalTodos(Date startDate, Date endDate) {
+    public int getTotalTodos(Date startDate, Date endDate) {
         return mTaskDao.getTotalTodos(startDate, endDate);
     }
-    public LiveData<Integer> getTotalDones(Date startDate, Date endDate) {
+    public int getTotalDones(Date startDate, Date endDate) {
         return mTaskDao.getTotalDones(startDate, endDate);
     }
 
