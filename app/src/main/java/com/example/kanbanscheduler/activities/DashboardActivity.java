@@ -93,19 +93,6 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        mTaskViewModel.getTotalTodos(getStartDate(), getEndDate()).observe(this, integer -> {
-//            if(integer != null) totalTodos=integer;
-//            else totalTodos=0;
-//            String todoString="Todos\n"+ totalTodos;
-//            mTodoCount.setText(todoString);
-//        });
-//        mTaskViewModel.getTotalDones(getStartDate(), getEndDate()).observe(this, integer -> {
-//            if(integer!= null) totalDones=integer;
-//            else totalDones=0;
-//            String doneString="Dones\n"+totalDones;
-//            mDoneCount.setText(doneString);
-//            configureTotalTasks();
-//        });
 
 //        spinner = findViewById(R.id.date_spinner);
 //        if(spinner != null) spinner.setOnItemSelectedListener(this);
@@ -206,12 +193,12 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
 //    public void onNothingSelected(AdapterView<?> adapterView) {}
 
     private void configureTasks() throws InterruptedException {
+        // Use threads to get counts since we can't run queries on main thread due to potential UI locking
         AtomicInteger totalTodosCount = new AtomicInteger();
         Thread todoThread = new Thread(() -> {
             int totalTodos = mTaskViewModel.getTotalTodos(getStartDate(), getEndDate());
             totalTodosCount.set(totalTodos);
         });
-        todoThread.setPriority(10);
         todoThread.start();
         todoThread.join();
 
@@ -223,7 +210,6 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
             int totalDones = mTaskViewModel.getTotalDones(getStartDate(), getEndDate());
             totalDonesCount.set(totalDones);
         });
-        doneThread.setPriority(5);
         doneThread.start();
         doneThread.join();
 
@@ -243,22 +229,7 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         String progressText=totalProgress+"%\nDone";
         mProgressText.setText(progressText);
     }
-//    private void configureTotalTasks() {
-//        int totalTasks = totalDones+totalTodos;
-//        String totalString="Total\n"+totalTasks;
-//        mTotalCount.setText(totalString);
-//        int totalProgress = 100;
-//        if(totalTasks != 0) {
-//            double base = (double)totalDones/totalTasks;
-//            double rounded=Math.round(base*100.0)/100.0;
-//            totalProgress = (int) Math.round(rounded*100);
-//
-//        }
-//        mProgressBar.setProgress(totalProgress);
-//        String progressText=totalProgress+"%\nDone";
-//        mProgressText.setText(progressText);
-//
-//    }
+
     private void configureToolBar() {
         Toolbar navToolbar = findViewById(R.id.nav_toolbar);
         navToolbar.setTitle("Dashboard");

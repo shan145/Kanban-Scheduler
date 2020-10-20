@@ -19,6 +19,6 @@
             android:gravity="center_vertical|center_horizontal"
             android:textSize="20sp"
             android:textColor="#FFFFFF"
-            android:fontFamily="@font/montserrat" />
+            android:fontFamily="@font/montserrat"/>
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

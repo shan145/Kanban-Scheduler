@@ -96,7 +96,6 @@ public class TopicGridAdapter extends RecyclerView.Adapter<TopicGridAdapter.Topi
         void bindTo(Topic currentTopic, int position) {
             mTopicName.setText(currentTopic.getTopicName());
             mCardView.setCardBackgroundColor(colorArray[position%colorArray.length]);
-            // mTopicName.setBackgroundColor(colorArray[position%colorArray.length]);
         }
 
         @Override
