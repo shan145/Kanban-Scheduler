@@ -1,16 +1,12 @@
 package com.example.kanbanscheduler.activities;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -122,6 +118,11 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
             builder.setPositiveButton("Delete", (dialogInterface, i) -> {
                 Topic topic = mAdapter.getTopicAtPosition(pos);
                 mTopicViewModel.deleteTopic(topic);
+                // Reload activity to pick up any changes to UI top dashboard
+                finish();
+                overridePendingTransition(0, 0);
+                startActivity(getIntent());
+                overridePendingTransition(0, 0);
             }).setNegativeButton("Cancel", null);
             AlertDialog dialog = builder.create();
             dialog.show();
@@ -142,14 +143,14 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
                     container.addView(topicText);
                     // Create dialog builder
                     AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
-                    builder.setTitle("Enter a Topic Name:");
+                    builder.setTitle("Enter a Topic");
                     builder.setView(container)
                             .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     String topicName = topicText.getText().toString().trim();
                                     if(mAdapter.inTopicList(topicName)) {
-                                        Toast.makeText(DashboardActivity.this, "Unable to get add topic. The topic name may already exist.", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(DashboardActivity.this, "Unable to add topic. The topic name may already exist.", Toast.LENGTH_LONG).show();
                                     } else {
                                         mTopicViewModel.insertTopic(new Topic(topicName));
                                     }

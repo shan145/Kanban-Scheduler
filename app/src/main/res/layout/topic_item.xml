@@ -8,11 +8,12 @@
         android:id="@+id/topic_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.MaterialComponents.DayNight"
+        android:theme="@style/Theme.MaterialComponents.Light"
         android:layout_margin="15dp"
+        card_view:cardForegroundColor="@color/card_states"
         card_view:cardCornerRadius="15dp"
-        card_view:cardForegroundColor="@color/card_states">
-        <TextView
+        card_view:cardElevation="0dp">
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/topic"
             android:layout_width="175dp"
             android:layout_height="175dp"

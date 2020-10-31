@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.kanbanscheduler.R;
 import com.example.kanbanscheduler.room_db.Topic;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.List;
 
@@ -83,7 +84,7 @@ public class TopicGridAdapter extends RecyclerView.Adapter<TopicGridAdapter.Topi
     }
 
     class TopicViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
-        private TextView mTopicName;
+        private MaterialTextView mTopicName;
         private MaterialCardView mCardView;
         public TopicViewHolder(View itemView, TopicGridAdapter adapter) {
             super(itemView);
