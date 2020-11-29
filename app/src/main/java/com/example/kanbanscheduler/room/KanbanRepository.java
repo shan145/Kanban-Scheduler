@@ -1,4 +1,4 @@
-package com.example.kanbanscheduler.room_db;
+package com.example.kanbanscheduler.room;
 
 import android.app.Application;
 
@@ -6,8 +6,6 @@ import androidx.lifecycle.LiveData;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class KanbanRepository {
     private TaskDao mTaskDao;

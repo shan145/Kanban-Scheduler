@@ -1,17 +1,14 @@
 package com.example.kanbanscheduler.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.kanbanscheduler.R;
-import com.example.kanbanscheduler.room_db.Topic;
+import com.example.kanbanscheduler.room.Topic;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textview.MaterialTextView;
 

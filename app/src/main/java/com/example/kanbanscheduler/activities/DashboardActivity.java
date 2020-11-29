@@ -1,6 +1,5 @@
 package com.example.kanbanscheduler.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,31 +7,17 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Observable;
-import android.database.sqlite.SQLiteConstraintException;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.InputFilter;
-import android.text.Layout;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,11 +25,10 @@ import com.example.kanbanscheduler.R;
 import com.example.kanbanscheduler.adapters.TopicGridAdapter;
 import com.example.kanbanscheduler.models.TaskViewModel;
 import com.example.kanbanscheduler.models.TopicViewModel;
-import com.example.kanbanscheduler.room_db.Topic;
+import com.example.kanbanscheduler.room.Topic;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -68,48 +52,151 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-
-        // Setting up user, toolbar, drawer, and drawer header
-        mDrayerLayout = findViewById(R.id.drawer_layout);
+        configureUIComponents();
         configureToolBar();
         configureNavigationDrawer();
+        tryConfigureProgressCard();
+        configureSpinner();
+        configureClickListenersOnAdapters();
+        configureBottomNavigation();
+    }
 
-        // Setting up view models
-        mTopicViewModel = new ViewModelProvider(this).get(TopicViewModel.class);
-        mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
-
-        // Setting up top card views and functions
+    private void configureUIComponents() {
+        mDrayerLayout = findViewById(R.id.drawer_layout);
         mProgressBar = findViewById(R.id.circular_progress_bar);
         mProgressText = findViewById(R.id.progress_percent);
         mTodoCount = findViewById(R.id.total_todo);
         mTotalCount = findViewById(R.id.total_tasks);
         mDoneCount = findViewById(R.id.total_done);
+        mTopicViewModel = new ViewModelProvider(this).get(TopicViewModel.class);
+        mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        mRecyclerView = findViewById(R.id.dashboard_recycler);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        mAdapter = new TopicGridAdapter(this);
+        mTopicViewModel.getTopics().observe(this, topics -> mAdapter.setTopics(topics));
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void configureToolBar() {
+        Toolbar navToolbar = findViewById(R.id.nav_toolbar);
+        navToolbar.setTitle("Dashboard");
+        setSupportActionBar(navToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(true);
+    }
+
+    private void configureNavigationDrawer() {
+        NavigationView navView = findViewById(R.id.nav_view);
+        navView.setNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            switch(itemId) {
+                case R.id.dashboard:
+                    Toast.makeText(DashboardActivity.this, "You pressed Dashboard!", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.logout:
+                    FirebaseAuth.getInstance().signOut();
+                    Intent intent = new Intent(DashboardActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                    break;
+            }
+            mDrayerLayout.closeDrawers();
+            return true;
+        });
+    }
+
+    private void tryConfigureProgressCard() {
         try {
-            configureTasks();
+            configureProgressCard();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
 
+    private void configureProgressCard() throws InterruptedException {
+        int todoCount = getTodoCount();
+        String todos = "Todos\n"+todoCount;
+        mTodoCount.setText(todos);
+
+        int doneCount = getDoneCount();
+        String dones = "Done\n"+doneCount;
+        mDoneCount.setText(dones);
+
+        int totalTasks = todoCount+doneCount;
+        String total = "Total\n"+totalTasks;
+        mTotalCount.setText(total);
+
+        int totalProgress = 100;
+        if(totalTasks != 0) {
+            double base = (double)doneCount/totalTasks;
+            double rounded=Math.round(base*100.0)/100.0;
+            totalProgress = (int) Math.round(rounded*100);
+        }
+        mProgressBar.setProgress(totalProgress);
+        String progressText=totalProgress+"%\nDone";
+        mProgressText.setText(progressText);
+    }
+
+    private int getTodoCount() throws InterruptedException {
+        AtomicInteger totalTodosCount = new AtomicInteger();
+        Thread todoThread = new Thread(() -> {
+            int totalTodos = mTaskViewModel.getTotalTodos(getStartOfToday(), getEndOfToday());
+            totalTodosCount.set(totalTodos);
+        });
+        todoThread.start();
+        todoThread.join();
+        return totalTodosCount.get();
+    }
+
+    private int getDoneCount() throws InterruptedException {
+        AtomicInteger totalDonesCount = new AtomicInteger();
+        Thread doneThread = new Thread(() -> {
+            int totalDones = mTaskViewModel.getTotalDones(getStartOfToday(), getEndOfToday());
+            totalDonesCount.set(totalDones);
+        });
+        doneThread.start();
+        doneThread.join();
+        return totalDonesCount.get();
+    }
+
+    private Date getStartOfToday() {
+        Calendar calDate = new GregorianCalendar();
+        calDate.set(Calendar.HOUR_OF_DAY, 0);
+        calDate.set(Calendar.MINUTE, 0);
+        calDate.set(Calendar.SECOND, 0);
+        calDate.set(Calendar.MILLISECOND, 0);
+        return calDate.getTime();
+    }
+
+    private Date getEndOfToday() {
+        Calendar calDate = new GregorianCalendar();
+        calDate.set(Calendar.HOUR_OF_DAY, 23);
+        calDate.set(Calendar.MINUTE, 59);
+        calDate.set(Calendar.SECOND, 59);
+        calDate.set(Calendar.MILLISECOND, 999);
+        return calDate.getTime();
+    }
+
+    private void configureSpinner() {
 //        spinner = findViewById(R.id.date_spinner);
 //        if(spinner != null) spinner.setOnItemSelectedListener(this);
 //        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.dates_array, R.layout.date_spinner);
 //        // Specify the layout to use when the list of choices appear.
 //        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 //        if(spinner != null) spinner.setAdapter(adapter);
+    }
 
-        // Setting up recycler view for dashboard and functions
-        mRecyclerView = findViewById(R.id.dashboard_recycler);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        mAdapter = new TopicGridAdapter(this);
-        mTopicViewModel.getTopics().observe(this, topics -> mAdapter.setTopics(topics));
-        mRecyclerView.setAdapter(mAdapter);
-        // Sets up adapter to listen to clicks
+    private void configureClickListenersOnAdapters() {
         mAdapter.setClickListener((pos, context) -> {
             Topic topic = mAdapter.getTopicAtPosition(pos);
             Intent intent = new Intent(DashboardActivity.this, TaskActivity.class);
             intent.putExtra("EXTRA_TOPIC_NAME", topic.getTopicName());
             startActivity(intent);
         });
+
         mAdapter.setLongClickListener(pos -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
             builder.setCancelable(true);
@@ -127,8 +214,9 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
             AlertDialog dialog = builder.create();
             dialog.show();
         });
+    }
 
-        // Setting up bottom navigation
+    private void configureBottomNavigation() {
         BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
         navigationView.setOnNavigationItemSelectedListener(item -> {
             switch(item.getItemId()) {
@@ -170,7 +258,21 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         });
     }
 
-//    @Override
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        switch(itemId) {
+            //Android Home
+            case android.R.id.home:
+                mDrayerLayout.openDrawer(GravityCompat.START);
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    //    @Override
 //    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 //        String spinnerLabel = adapterView.getItemAtPosition(i).toString();
 //        int totalTodos=0;
@@ -192,108 +294,4 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
 //
 //    @Override
 //    public void onNothingSelected(AdapterView<?> adapterView) {}
-
-    private void configureTasks() throws InterruptedException {
-        // Use threads to get counts since we can't run queries on main thread due to potential UI locking
-        AtomicInteger totalTodosCount = new AtomicInteger();
-        Thread todoThread = new Thread(() -> {
-            int totalTodos = mTaskViewModel.getTotalTodos(getStartDate(), getEndDate());
-            totalTodosCount.set(totalTodos);
-        });
-        todoThread.start();
-        todoThread.join();
-
-        String todoString="Todos\n"+ totalTodosCount.get();
-        mTodoCount.setText(todoString);
-
-        AtomicInteger totalDonesCount = new AtomicInteger();
-        Thread doneThread = new Thread(() -> {
-            int totalDones = mTaskViewModel.getTotalDones(getStartDate(), getEndDate());
-            totalDonesCount.set(totalDones);
-        });
-        doneThread.start();
-        doneThread.join();
-
-        String doneString="Dones\n"+totalDonesCount.get();
-        mDoneCount.setText(doneString);
-
-        int totalTasks = totalTodosCount.get()+totalDonesCount.get();
-        String totalString="Total\n"+totalTasks;
-        mTotalCount.setText(totalString);
-        int totalProgress = 100;
-        if(totalTasks != 0) {
-            double base = (double)totalDonesCount.get()/totalTasks;
-            double rounded=Math.round(base*100.0)/100.0;
-            totalProgress = (int) Math.round(rounded*100);
-        }
-        mProgressBar.setProgress(totalProgress);
-        String progressText=totalProgress+"%\nDone";
-        mProgressText.setText(progressText);
-    }
-
-    private void configureToolBar() {
-        Toolbar navToolbar = findViewById(R.id.nav_toolbar);
-        navToolbar.setTitle("Dashboard");
-        setSupportActionBar(navToolbar);
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(true);
-    }
-
-    private void configureNavigationDrawer() {
-        NavigationView navView = findViewById(R.id.nav_view);
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-                switch(itemId) {
-                    case R.id.dashboard:
-                        Toast.makeText(DashboardActivity.this, "You pressed Dashboard!", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.logout:
-                        FirebaseAuth.getInstance().signOut();
-                        Intent intent = new Intent(DashboardActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                        break;
-                }
-                mDrayerLayout.closeDrawers();
-                return true;
-            }
-        });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        switch(itemId) {
-            //Android Home
-            case android.R.id.home:
-                mDrayerLayout.openDrawer(GravityCompat.START);
-                break;
-            default:
-                break;
-        }
-        return true;
-    }
-
-    private Date getStartDate() {
-        Calendar calDate = new GregorianCalendar();
-        calDate.set(Calendar.HOUR_OF_DAY, 0);
-        calDate.set(Calendar.MINUTE, 0);
-        calDate.set(Calendar.SECOND, 0);
-        calDate.set(Calendar.MILLISECOND, 0);
-        return calDate.getTime();
-    }
-
-    private Date getEndDate() {
-        Calendar calDate = new GregorianCalendar();
-        calDate.set(Calendar.HOUR_OF_DAY, 23);
-        calDate.set(Calendar.MINUTE, 59);
-        calDate.set(Calendar.SECOND, 59);
-        calDate.set(Calendar.MILLISECOND, 999);
-        return calDate.getTime();
-    }
 }

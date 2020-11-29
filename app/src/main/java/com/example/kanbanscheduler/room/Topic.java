@@ -1,4 +1,4 @@
-package com.example.kanbanscheduler.room_db;
+package com.example.kanbanscheduler.room;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

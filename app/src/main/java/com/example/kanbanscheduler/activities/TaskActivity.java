@@ -3,21 +3,18 @@ package com.example.kanbanscheduler.activities;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.kanbanscheduler.R;
 import com.example.kanbanscheduler.adapters.TaskListAdapter;
 import com.example.kanbanscheduler.models.TaskViewModel;
-import com.example.kanbanscheduler.room_db.Task;
+import com.example.kanbanscheduler.room.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
@@ -49,7 +46,7 @@ public class TaskActivity extends AppCompatActivity {
         // Set edit listener for adapter
         mAdapter.setEditListener(pos -> {
             Task task = mAdapter.getTaskAtPosition(pos);
-            Intent intent = new Intent(TaskActivity.this, TaskFillActivity.class);
+            Intent intent = new Intent(TaskActivity.this, TaskFormActivity.class);
             Bundle b = new Bundle();
             b.putString("EXTRA_EDIT_NAME", task.getName());
             b.putString("EXTRA_EDIT_DESCRIPTION", task.getDescription());
@@ -73,7 +70,7 @@ public class TaskActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            Intent intent = new Intent(TaskActivity.this, TaskFillActivity.class);
+            Intent intent = new Intent(TaskActivity.this, TaskFormActivity.class);
             startActivityForResult(intent, NEW_TASK_ACTIVITY_REQUEST_CODE);
         });
         // Updates cached copy of tasks in adapter if change to live data is observed

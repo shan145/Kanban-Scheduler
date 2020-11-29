@@ -3,22 +3,19 @@ package com.example.kanbanscheduler.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.kanbanscheduler.R;
-import com.example.kanbanscheduler.room_db.Task;
-import com.google.android.material.card.MaterialCardView;
+import com.example.kanbanscheduler.room.Task;
 
 import java.util.List;
 

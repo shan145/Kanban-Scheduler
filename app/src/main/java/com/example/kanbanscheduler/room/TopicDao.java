@@ -1,4 +1,4 @@
-package com.example.kanbanscheduler.room_db;
+package com.example.kanbanscheduler.room;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

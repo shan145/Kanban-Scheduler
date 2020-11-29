@@ -6,8 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.kanbanscheduler.room_db.KanbanRepository;
-import com.example.kanbanscheduler.room_db.Topic;
+import com.example.kanbanscheduler.room.KanbanRepository;
+import com.example.kanbanscheduler.room.Topic;
 
 import java.util.List;
 

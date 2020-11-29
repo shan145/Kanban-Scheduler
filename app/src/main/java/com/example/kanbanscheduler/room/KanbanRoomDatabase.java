@@ -1,4 +1,4 @@
-package com.example.kanbanscheduler.room_db;
+package com.example.kanbanscheduler.room;
 
 import android.content.Context;
 import androidx.room.Database;

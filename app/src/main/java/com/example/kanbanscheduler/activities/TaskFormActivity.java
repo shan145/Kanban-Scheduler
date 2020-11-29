@@ -8,10 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.kanbanscheduler.R;
@@ -22,7 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class TaskFillActivity extends AppCompatActivity {
+public class TaskFormActivity extends AppCompatActivity {
     private EditText mTaskName;
     private EditText mTaskDescription;
     private Button mSetReminderButton;
@@ -38,7 +36,7 @@ public class TaskFillActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task_fill);
+        setContentView(R.layout.activity_task_form);
         mTaskName = findViewById(R.id.task);
         mTaskDescription = findViewById(R.id.task_description);
         mSetReminderButton = findViewById(R.id.set_reminder);
@@ -62,29 +60,23 @@ public class TaskFillActivity extends AppCompatActivity {
             }
         }
 
-        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                month++;
-                String pickedDate = month+"/"+day+"/"+year;
-                mDate.setText(pickedDate);
-            }
+        mDateSetListener = (datePicker, year, month, day) -> {
+            month++;
+            String pickedDate = month+"/"+day+"/"+year;
+            mDate.setText(pickedDate);
         };
 
-        mTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.US);
-                String timeString = hourOfDay+":"+minute;
-                try {
-                    // TimePicker always return in 0-23 hr format, so must use HH instead of hh
-                    Date pickedTime = new SimpleDateFormat("HH:mm", Locale.US).parse(timeString);
-                    assert pickedTime != null;
-                    String timeFormatString = timeFormat.format(pickedTime);
-                    mTime.setText(timeFormatString);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+        mTimeSetListener = (timePicker, hourOfDay, minute) -> {
+            SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.US);
+            String timeString = hourOfDay+":"+minute;
+            try {
+                // TimePicker always return in 0-23 hr format, so must use HH instead of hh
+                Date pickedTime = new SimpleDateFormat("HH:mm", Locale.US).parse(timeString);
+                assert pickedTime != null;
+                String timeFormatString = timeFormat.format(pickedTime);
+                mTime.setText(timeFormatString);
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
         };
     }
@@ -107,7 +99,7 @@ public class TaskFillActivity extends AppCompatActivity {
                 // If date is filled out but not time
                 if(!mDate.getText().toString().equals("") && mTime.getText().equals("")) {
                     Toast.makeText(this, "Please fill out the time as well.", Toast.LENGTH_SHORT).show();
-                // If time is filled out but note date
+                // If time is filled out but not date
                 } else if(!mTime.getText().equals("") && mDate.getText().equals("")) {
                     Toast.makeText(this, "Please fill out date as well.", Toast.LENGTH_SHORT).show();
                 // If neither time nor date is filled out
@@ -138,7 +130,6 @@ public class TaskFillActivity extends AppCompatActivity {
                 intent.putExtras(extras);
                 setResult(RESULT_OK, intent);
                 finish();
-
             }
         }
     }
@@ -175,7 +166,7 @@ public class TaskFillActivity extends AppCompatActivity {
             day = Integer.parseInt(str[1]);
             year = Integer.parseInt(str[2]);
         }
-        DatePickerDialog dialog = new DatePickerDialog(TaskFillActivity.this, R.style.Theme_AppCompat_DayNight_Dialog, mDateSetListener, year, month, day);
+        DatePickerDialog dialog = new DatePickerDialog(TaskFormActivity.this, R.style.Theme_AppCompat_DayNight_Dialog, mDateSetListener, year, month, day);
         dialog.show();
     }
 
@@ -191,7 +182,7 @@ public class TaskFillActivity extends AppCompatActivity {
             hour = Integer.parseInt(str[0]);
             min = Integer.parseInt(str[1]);
         }
-        TimePickerDialog dialog = new TimePickerDialog(TaskFillActivity.this, 3, mTimeSetListener, hour, min, false);
+        TimePickerDialog dialog = new TimePickerDialog(TaskFormActivity.this, 3, mTimeSetListener, hour, min, false);
         dialog.show();
     }
 
