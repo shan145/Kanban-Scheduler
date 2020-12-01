@@ -9,9 +9,13 @@
         android:roundIcon="@mipmap/kanban_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.TaskActivity"
+        <activity android:name=".activities.TasksTodayActivity"></activity>
+        <activity
+            android:name=".activities.TaskActivity"
             android:parentActivityName=".activities.DashboardActivity">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".activities.DashboardActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.DashboardActivity" />
         </activity>
         <activity android:name=".activities.DashboardActivity" />
         <activity android:name=".activities.TaskFormActivity" />

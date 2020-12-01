@@ -55,7 +55,7 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         configureUIComponents();
         configureToolBar();
         configureNavigationDrawer();
-        tryConfigureProgressCard();
+        tryToConfigureProgressCard();
         configureSpinner();
         configureClickListenersOnAdapters();
         configureBottomNavigation();
@@ -108,7 +108,7 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         });
     }
 
-    private void tryConfigureProgressCard() {
+    private void tryToConfigureProgressCard() {
         try {
             configureProgressCard();
         } catch (InterruptedException e) {
@@ -221,41 +221,45 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         navigationView.setOnNavigationItemSelectedListener(item -> {
             switch(item.getItemId()) {
                 case R.id.add_topic:
-                    LinearLayout container = new LinearLayout(DashboardActivity.this);
-                    container.setOrientation(LinearLayout.VERTICAL);
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    lp.setMargins(40, 15, 40, 15);
-                    EditText topicText = new EditText(DashboardActivity.this);
-                    topicText.setLayoutParams(lp);
-                    topicText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(20)});
-                    container.addView(topicText);
-                    // Create dialog builder
-                    AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
-                    builder.setTitle("Enter a Topic");
-                    builder.setView(container)
-                            .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    String topicName = topicText.getText().toString().trim();
-                                    if(mAdapter.inTopicList(topicName)) {
-                                        Toast.makeText(DashboardActivity.this, "Unable to add topic. The topic name may already exist.", Toast.LENGTH_LONG).show();
-                                    } else {
-                                        mTopicViewModel.insertTopic(new Topic(topicName));
-                                    }
-                                }
-                            }).setNegativeButton("Cancel", null);
-                    AlertDialog build = builder.create();
-                    build.show();
+                    createTopicDialog();
                     break;
                 case R.id.topic_home:
                     Toast.makeText(DashboardActivity.this, "You have reached the Home Button", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.task_today:
                     Toast.makeText(DashboardActivity.this, "You have reached today's tasks", Toast.LENGTH_SHORT).show();
+                    Intent tasksTodayIntent = new Intent(DashboardActivity.this, TasksTodayActivity.class);
+                    startActivity(tasksTodayIntent);
                     break;
             }
             return true;
         });
+    }
+
+    private void createTopicDialog() {
+        LinearLayout container = new LinearLayout(DashboardActivity.this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(40, 15, 40, 15);
+        EditText topicText = new EditText(DashboardActivity.this);
+        topicText.setLayoutParams(lp);
+        topicText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(20)});
+        container.addView(topicText);
+
+        // Create dialog builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+        builder.setTitle("Enter a Topic");
+        builder.setView(container)
+                .setPositiveButton("Add", (dialogInterface, i) -> {
+                    String topicName = topicText.getText().toString().trim();
+                    if(mAdapter.inTopicList(topicName)) {
+                        Toast.makeText(DashboardActivity.this, "Unable to add topic. The topic name may already exist.", Toast.LENGTH_LONG).show();
+                    } else {
+                        mTopicViewModel.insertTopic(new Topic(topicName));
+                    }
+                }).setNegativeButton("Cancel", null);
+        AlertDialog build = builder.create();
+        build.show();
     }
 
     @Override
@@ -270,6 +274,16 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
                 break;
         }
         return true;
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        //When BACK BUTTON is pressed, the activity on the stack is restarted
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
     }
 
     //    @Override

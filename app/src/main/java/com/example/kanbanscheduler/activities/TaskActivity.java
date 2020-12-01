@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.example.kanbanscheduler.R;
@@ -76,7 +77,6 @@ public class TaskActivity extends AppCompatActivity {
         // Updates cached copy of tasks in adapter if change to live data is observed
         mViewModel.getTasks(topicName).observe(this, tasks-> mAdapter.setTasks(tasks));
         configureToolBar();
-        // configureTabLayout();
     }
 
     @Override
@@ -109,25 +109,4 @@ public class TaskActivity extends AppCompatActivity {
         actionBar.setTitle(topicName);
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
-
-    private void configureTabLayout() {
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Today"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tomorrow"));
-        tabLayout.addTab(tabLayout.newTab().setText("Upcoming"));
-        // Set tabs to fill entire layout
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                Toast.makeText(TaskActivity.this, Objects.requireNonNull(tab.getText()).toString(), Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
-        });
-    }
-
 }
