@@ -276,16 +276,6 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         return true;
     }
 
-    @Override
-    public void onRestart() {
-        super.onRestart();
-        //When BACK BUTTON is pressed, the activity on the stack is restarted
-        finish();
-        overridePendingTransition(0, 0);
-        startActivity(getIntent());
-        overridePendingTransition(0, 0);
-    }
-
     //    @Override
 //    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 //        String spinnerLabel = adapterView.getItemAtPosition(i).toString();
