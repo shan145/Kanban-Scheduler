@@ -1,9 +1,11 @@
 package com.example.kanbanscheduler.activities;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,8 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -243,8 +247,11 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         container.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(40, 15, 40, 15);
+        Typeface montserratTypeface = ResourcesCompat.getFont(DashboardActivity.this, R.font.montserrat);
+
         EditText topicText = new EditText(DashboardActivity.this);
-        topicText.setTypeface(Typeface.SANS_SERIF);
+        topicText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        topicText.setTypeface(montserratTypeface);
         topicText.setLayoutParams(lp);
         topicText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(20)});
         container.addView(topicText);
@@ -266,7 +273,7 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
 
         // Set title font to italicized
         TextView alertTitle = Objects.requireNonNull(build.getWindow()).findViewById(R.id.alertTitle);
-        alertTitle.setTypeface(Typeface.SANS_SERIF);
+        alertTitle.setTypeface(montserratTypeface);
     }
 
     @Override
