@@ -1,30 +1,35 @@
 <resources>
-    <string name="app_name">Kanban Scheduler</string>
-    <string name="app_title">Kanban Scheduler</string>
+    <string name="app_name">Task Scheduler</string>
+    <string name="app_title">Task Scheduler</string>
     <string name="timer_picture">Timer picture</string>
     <string name="slogan">A Better Way to Organize Your Tasks</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
+
     <string name="full_name">Full Name</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
     <string name="enter">Enter</string>
+
     <string name="forgot_password">Did you forget your password? Click here</string>
     <string name="authenticate_msg">You authenticated successfully!</string>
     <string name="logout">logout</string>
     <string name="reset_msg">Enter your email to reset your password.</string>
     <string name="reset">Reset</string>
+
     <string name="to_do">These are your todos</string>
     <string name="in_progress">These are your in progresses</string>
     <string name="done">These are your finished</string>
     <string name="more">More</string>
+
     <string name="logout_cap">Logout</string>
     <string name="calendar_picture">calendar picture</string>
     <string name="clock_picture">clock picture</string>
     <string name="edit_button">Edit Button</string>
     <string name="delete_button">Delete button</string>
+
     <string name="task_name_hint">Task Name</string>
     <string name="note_optional">Note (Optional)</string>
     <string name="set_reminder">Set Notification</string>
@@ -33,6 +38,7 @@
     <string name="pick_a_time">Pick a Time</string>
     <string name="cancel">Cancel</string>
     <string name="submit">Submit</string>
+
     <string name="home">Home</string>
     <string name="add_topic">Add Topic</string>
     <string name="today_s_tasks">Today\'s Tasks</string>
