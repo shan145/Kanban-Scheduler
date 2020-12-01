@@ -3,6 +3,7 @@ package com.example.kanbanscheduler.activities;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -108,5 +109,12 @@ public class TaskActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setTitle(topicName);
         actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    // Ensures that we move up one level instead of back to have dashboard register changes
+    @Override
+    public void onBackPressed() {
+        NavUtils.navigateUpFromSameTask(this);
+        super.onBackPressed();
     }
 }
