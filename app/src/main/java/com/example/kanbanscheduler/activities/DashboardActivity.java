@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.MenuItem;
@@ -33,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DashboardActivity extends AppCompatActivity { // implements AdapterView.OnItemSelectedListener{
@@ -242,6 +244,7 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(40, 15, 40, 15);
         EditText topicText = new EditText(DashboardActivity.this);
+        topicText.setTypeface(Typeface.SANS_SERIF);
         topicText.setLayoutParams(lp);
         topicText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(20)});
         container.addView(topicText);
@@ -260,6 +263,10 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
                 }).setNegativeButton("Cancel", null);
         AlertDialog build = builder.create();
         build.show();
+
+        // Set title font to italicized
+        TextView alertTitle = Objects.requireNonNull(build.getWindow()).findViewById(R.id.alertTitle);
+        alertTitle.setTypeface(Typeface.SANS_SERIF);
     }
 
     @Override
