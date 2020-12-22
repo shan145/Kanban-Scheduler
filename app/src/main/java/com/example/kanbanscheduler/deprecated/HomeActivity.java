@@ -1,4 +1,4 @@
-package com.example.kanbanscheduler.activities;
+package com.example.kanbanscheduler.deprecated;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.kanbanscheduler.activities.MainActivity;
 import com.example.kanbanscheduler.adapters.PagerAdapter;
 import com.example.kanbanscheduler.R;
 import com.google.android.material.tabs.TabLayout;

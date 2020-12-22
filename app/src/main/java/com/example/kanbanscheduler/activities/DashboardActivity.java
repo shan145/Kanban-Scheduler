@@ -1,6 +1,5 @@
 package com.example.kanbanscheduler.activities;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,11 +10,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -31,7 +27,7 @@ import com.example.kanbanscheduler.adapters.TopicGridAdapter;
 import com.example.kanbanscheduler.models.TaskViewModel;
 import com.example.kanbanscheduler.models.TopicViewModel;
 import com.example.kanbanscheduler.room.Topic;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -41,14 +37,12 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DashboardActivity extends AppCompatActivity { // implements AdapterView.OnItemSelectedListener{
+public class DashboardActivity extends AppCompatActivity {
     private TextView mProgressText;
     private ProgressBar mProgressBar;
     private TextView mTodoCount;
     private TextView mTotalCount;
     private TextView mDoneCount;
-//    private Spinner spinner;
-    private RecyclerView mRecyclerView;
     private TopicGridAdapter mAdapter;
     private TopicViewModel mTopicViewModel;
     private TaskViewModel mTaskViewModel;
@@ -62,9 +56,8 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         configureToolBar();
         configureNavigationDrawer();
         tryToConfigureProgressCard();
-        configureSpinner();
         configureClickListenersOnAdapters();
-        configureBottomNavigation();
+        configureFabButton();
     }
 
     private void configureUIComponents() {
@@ -76,7 +69,7 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         mDoneCount = findViewById(R.id.total_done);
         mTopicViewModel = new ViewModelProvider(this).get(TopicViewModel.class);
         mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
-        mRecyclerView = findViewById(R.id.dashboard_recycler);
+        RecyclerView mRecyclerView = findViewById(R.id.dashboard_recycler);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mAdapter = new TopicGridAdapter(this);
         mTopicViewModel.getTopics().observe(this, topics -> mAdapter.setTopics(topics));
@@ -186,15 +179,6 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         return calDate.getTime();
     }
 
-    private void configureSpinner() {
-//        spinner = findViewById(R.id.date_spinner);
-//        if(spinner != null) spinner.setOnItemSelectedListener(this);
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.dates_array, R.layout.date_spinner);
-//        // Specify the layout to use when the list of choices appear.
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        if(spinner != null) spinner.setAdapter(adapter);
-    }
-
     private void configureClickListenersOnAdapters() {
         mAdapter.setClickListener((pos, context) -> {
             Topic topic = mAdapter.getTopicAtPosition(pos);
@@ -222,23 +206,10 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         });
     }
 
-    private void configureBottomNavigation() {
-        BottomNavigationView navigationView = findViewById(R.id.bottom_navigation);
-        navigationView.setOnNavigationItemSelectedListener(item -> {
-            switch(item.getItemId()) {
-                case R.id.add_topic:
-                    createTopicDialog();
-                    break;
-                case R.id.topic_home:
-                    Toast.makeText(DashboardActivity.this, "You have reached the Home Button", Toast.LENGTH_SHORT).show();
-                    break;
-                case R.id.task_today:
-                    Toast.makeText(DashboardActivity.this, "You have reached today's tasks", Toast.LENGTH_SHORT).show();
-                    Intent tasksTodayIntent = new Intent(DashboardActivity.this, TasksTodayActivity.class);
-                    startActivity(tasksTodayIntent);
-                    break;
-            }
-            return true;
+    private void configureFabButton() {
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(view -> {
+            createTopicDialog();
         });
     }
 
@@ -256,7 +227,6 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         topicText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(20)});
         container.addView(topicText);
 
-        // Create dialog builder
         AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
         builder.setTitle("Enter a Topic");
         builder.setView(container)
@@ -271,7 +241,6 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
         AlertDialog build = builder.create();
         build.show();
 
-        // Set title font to italicized
         TextView alertTitle = Objects.requireNonNull(build.getWindow()).findViewById(R.id.alertTitle);
         alertTitle.setTypeface(montserratTypeface);
     }
@@ -279,37 +248,10 @@ public class DashboardActivity extends AppCompatActivity { // implements Adapter
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        switch(itemId) {
-            //Android Home
-            case android.R.id.home:
-                mDrayerLayout.openDrawer(GravityCompat.START);
-                break;
-            default:
-                break;
+        //Android Home
+        if (itemId == android.R.id.home) {
+            mDrayerLayout.openDrawer(GravityCompat.START);
         }
         return true;
     }
-
-    //    @Override
-//    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//        String spinnerLabel = adapterView.getItemAtPosition(i).toString();
-//        int totalTodos=0;
-//        int totalDones=0;
-//        int totalTasks=0;
-//        Date today = new Date();
-//        if(spinnerLabel.equals("Weekly")) {
-//            totalTasks = totalTodos+totalDones;
-//        } else {
-//            Toast.makeText(this, "Will do rest later", Toast.LENGTH_SHORT).show();
-//        }
-//        String todoString="Todos\n"+ totalTodos;
-//        mTodoCount.setText(todoString);
-//        String doneString = "Done\n"+ totalDones;
-//        mDoneCount.setText(doneString);
-//        String totalString = "Total\n"+totalTasks;
-//        mTotalCount.setText(totalString);
-//    }
-//
-//    @Override
-//    public void onNothingSelected(AdapterView<?> adapterView) {}
 }

@@ -20,7 +20,7 @@
         <activity android:name=".activities.DashboardActivity" />
         <activity android:name=".activities.TaskFormActivity" />
         <activity android:name=".activities.ResetActivity" />
-        <activity android:name=".activities.HomeActivity" />
+        <activity android:name=".deprecated.HomeActivity" />
         <activity
             android:name=".activities.LoginActivity"
             android:label="Login Activity"
