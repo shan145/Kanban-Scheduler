@@ -40,7 +40,6 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
     public void onBindViewHolder(@NonNull TaskListAdapter.TaskViewHolder holder, int position) {
         Task mCurrent = mTaskList.get(position);
         holder.bindTo(mCurrent);
-        // holder.itemView.setOnLongClickListener();
     }
 
     @Override
@@ -143,8 +142,12 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.TaskVi
             }
 
             // If current task is done, make checked. If not, blank
-            if(currentTask.getTaskType() == 1) mCheckBox.setChecked(true);
-            else mCheckBox.setChecked(false);
+            if(currentTask.getTaskType() == 1) {
+                mCheckBox.setChecked(true);
+            }
+            else {
+                mCheckBox.setChecked(false);
+            }
 
             mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
