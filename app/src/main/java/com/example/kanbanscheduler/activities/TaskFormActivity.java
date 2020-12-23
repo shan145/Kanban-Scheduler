@@ -37,48 +37,9 @@ public class TaskFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_form);
-        mTaskName = findViewById(R.id.task);
-        mTaskDescription = findViewById(R.id.task_description);
-        mSetReminderButton = findViewById(R.id.set_reminder);
-        mDiscardButton = findViewById(R.id.discard_reminder);
-        mDate = findViewById(R.id.pick_date);
-        mDateLine = findViewById(R.id.pick_date_line);
-        mTime = findViewById(R.id.pick_time);
-        mTimeLine = findViewById(R.id.pick_time_line);
-
-        // Use in case of filling out form
-        Bundle b = getIntent().getExtras();
-        if(b != null) {
-            mTaskName.setText(b.getString("EXTRA_EDIT_NAME"));
-            mTaskDescription.setText(b.getString("EXTRA_EDIT_DESCRIPTION"));
-            mDate.setText(b.getString("EXTRA_EDIT_DATE"));
-            mTime.setText(b.getString("EXTRA_EDIT_TIME"));
-            editId = b.getInt("EXTRA_EDIT_ID");
-            // If date isn't empty, then show it reminder tags.
-            if(!mDate.getText().toString().equals("")) {
-                showReminder(mSetReminderButton);
-            }
-        }
-
-        mDateSetListener = (datePicker, year, month, day) -> {
-            month++;
-            String pickedDate = month+"/"+day+"/"+year;
-            mDate.setText(pickedDate);
-        };
-
-        mTimeSetListener = (timePicker, hourOfDay, minute) -> {
-            SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.US);
-            String timeString = hourOfDay+":"+minute;
-            try {
-                // TimePicker always return in 0-23 hr format, so must use HH instead of hh
-                Date pickedTime = new SimpleDateFormat("HH:mm", Locale.US).parse(timeString);
-                assert pickedTime != null;
-                String timeFormatString = timeFormat.format(pickedTime);
-                mTime.setText(timeFormatString);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        };
+        configureUIComponents();
+        configureFormValues();
+        configureListeners();
     }
 
     public void cancelForm(View view) {
@@ -170,7 +131,6 @@ public class TaskFormActivity extends AppCompatActivity {
         dialog.show();
     }
 
-
     public void showTimePicker(View view) {
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY)+1;
@@ -184,6 +144,54 @@ public class TaskFormActivity extends AppCompatActivity {
         }
         TimePickerDialog dialog = new TimePickerDialog(TaskFormActivity.this, 3, mTimeSetListener, hour, min, false);
         dialog.show();
+    }
+
+    private void configureUIComponents() {
+        mTaskName = findViewById(R.id.task);
+        mTaskDescription = findViewById(R.id.task_description);
+        mSetReminderButton = findViewById(R.id.set_reminder);
+        mDiscardButton = findViewById(R.id.discard_reminder);
+        mDate = findViewById(R.id.pick_date);
+        mDateLine = findViewById(R.id.pick_date_line);
+        mTime = findViewById(R.id.pick_time);
+        mTimeLine = findViewById(R.id.pick_time_line);
+    }
+
+    private void configureFormValues() {
+        Bundle b = getIntent().getExtras();
+        if(b != null) {
+            mTaskName.setText(b.getString("EXTRA_EDIT_NAME"));
+            mTaskDescription.setText(b.getString("EXTRA_EDIT_DESCRIPTION"));
+            mDate.setText(b.getString("EXTRA_EDIT_DATE"));
+            mTime.setText(b.getString("EXTRA_EDIT_TIME"));
+            editId = b.getInt("EXTRA_EDIT_ID");
+            // If date isn't empty, then show it reminder tags.
+            if(!mDate.getText().toString().equals("")) {
+                showReminder(mSetReminderButton);
+            }
+        }
+    }
+
+    private void configureListeners() {
+        mDateSetListener = (datePicker, year, month, day) -> {
+            month++;
+            String pickedDate = month+"/"+day+"/"+year;
+            mDate.setText(pickedDate);
+        };
+
+        mTimeSetListener = (timePicker, hourOfDay, minute) -> {
+            SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.US);
+            String timeString = hourOfDay+":"+minute;
+            try {
+                // TimePicker always return in 0-23 hr format, so must use HH instead of hh
+                Date pickedTime = new SimpleDateFormat("HH:mm", Locale.US).parse(timeString);
+                assert pickedTime != null;
+                String timeFormatString = timeFormat.format(pickedTime);
+                mTime.setText(timeFormatString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        };
     }
 
     // Reverse time from AM/PM to 24 hour format for TimePickerDialog
