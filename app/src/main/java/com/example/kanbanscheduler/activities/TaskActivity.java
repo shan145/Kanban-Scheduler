@@ -34,18 +34,32 @@ public class TaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
-        // Get topic name from intent
+        configureTopicName();
+        configureViewModel();
+        configureRecyclerViewAndAdapter();
+        configureFabButton();
+        configureToolBar();
+    }
+
+    private void configureTopicName() {
         topicName = getIntent().getStringExtra("EXTRA_TOPIC_NAME");
+    }
+
+    private void configureViewModel() {
         mViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        // Updates cached copy of tasks in adapter if change to live data is observed
+        mViewModel.getTasks(topicName).observe(this, tasks-> mAdapter.setTasks(tasks));
+    }
+
+    private void configureRecyclerViewAndAdapter() {
         RecyclerView mRecyclerView = findViewById(R.id.recyclerview);
         mAdapter = new TaskListAdapter(this);
 
-        // Set delete listener for adapter
         mAdapter.setDeleteListener(pos -> {
             Task task = mAdapter.getTaskAtPosition(pos);
             mViewModel.deleteTask(task);
         });
-        // Set edit listener for adapter
+
         mAdapter.setEditListener(pos -> {
             Task task = mAdapter.getTaskAtPosition(pos);
             Intent intent = new Intent(TaskActivity.this, TaskFormActivity.class);
@@ -58,7 +72,7 @@ public class TaskActivity extends AppCompatActivity {
             intent.putExtras(b);
             startActivityForResult(intent, EDIT_TASK_ACTIVITY_REQUEST_CODE);
         });
-        // Set check listener for adapter
+
         mAdapter.setCheckListener((isChecked, pos) -> {
             Task task = mAdapter.getTaskAtPosition(pos);
             if(isChecked) {
@@ -67,17 +81,26 @@ public class TaskActivity extends AppCompatActivity {
                 mViewModel.updateTaskType(0, task.getTid());
             }
         });
-        // Set adapter for recycler view
+
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void configureFabButton() {
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
             Intent intent = new Intent(TaskActivity.this, TaskFormActivity.class);
             startActivityForResult(intent, NEW_TASK_ACTIVITY_REQUEST_CODE);
         });
-        // Updates cached copy of tasks in adapter if change to live data is observed
-        mViewModel.getTasks(topicName).observe(this, tasks-> mAdapter.setTasks(tasks));
-        configureToolBar();
+    }
+
+    private void configureToolBar() {
+        Toolbar toolbar = findViewById(R.id.topic_toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setTitle(topicName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -100,15 +123,6 @@ public class TaskActivity extends AppCompatActivity {
                 mViewModel.updateTask(taskName, taskDescription, taskDate, taskTime, taskId);
             }
         }
-    }
-
-    private void configureToolBar() {
-        Toolbar toolbar = findViewById(R.id.topic_toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setTitle(topicName);
-        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     // Ensures that we move up one level instead of back to have dashboard register changes
